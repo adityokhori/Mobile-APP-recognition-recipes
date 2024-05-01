@@ -1,0 +1,5 @@
+0 Apple
+1 Banana
+2 Pineapple
+3 Watermelon
+4 Mandarin orange

@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "714456095150",
+    "project_id": "signin-tes",
+    "storage_bucket": "signin-tes.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:714456095150:android:0ed526d94316390504d03f",
+        "android_client_info": {
+          "package_name": "com.example.authentication"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD9mPu4GJxTZ9zWNXENKxvVMJT17F7OMsM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
