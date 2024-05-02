@@ -64,7 +64,7 @@ class _HistoryPageState extends State<HistoryPage> {
             backgroundColor: MaterialStateProperty.resolveWith<Color>(
               (Set<MaterialState> states) {
                 return _selectedButton == 0
-                    ? Colors.blue.shade100
+                    ? Colors.green.shade100
                     : Colors.grey.shade100;
               },
               
@@ -82,7 +82,7 @@ class _HistoryPageState extends State<HistoryPage> {
             backgroundColor: MaterialStateProperty.resolveWith<Color>(
               (Set<MaterialState> states) {
                 return _selectedButton == 1
-                    ? Colors.blue.shade100
+                    ? Colors.green.shade100
                     : Colors.grey.shade100;
               },
             ),
@@ -99,7 +99,7 @@ class _HistoryPageState extends State<HistoryPage> {
             backgroundColor: MaterialStateProperty.resolveWith<Color>(
               (Set<MaterialState> states) {
                 return _selectedButton == 2
-                    ? Colors.blue.shade100
+                    ? Colors.green.shade100
                     : Colors.grey.shade100;
               },
             ),

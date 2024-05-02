@@ -19,8 +19,7 @@ class OpenButtom extends StatelessWidget {
 
 class BottomNavigation extends StatefulWidget {
   @override
-  _BottomNavigationState createState() =>
-      _BottomNavigationState();
+  _BottomNavigationState createState() => _BottomNavigationState();
 }
 
 class _BottomNavigationState extends State<BottomNavigation> {
@@ -51,17 +50,18 @@ class _BottomNavigationState extends State<BottomNavigation> {
     return Scaffold(
       appBar: AppBar(
         title: ColorFiltered(
-          colorFilter: ColorFilter.mode(
-            Colors.black,
-            BlendMode.srcIn,
-          ),
-          child: Image.asset(
-            'assets/BeCipesLogo.png',
-            width: 120,
-            height: 50,
-            alignment: Alignment.centerLeft,
-          ),
-        ),
+            colorFilter: ColorFilter.mode(
+              Colors.green,
+              BlendMode.srcIn,
+            ),
+            child: Text(
+              'greenv',
+              style: TextStyle(
+                  fontSize: 40,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.green,
+                  fontFamily: 'SalmaproMedium-yw9ad'),
+            )),
         actions: [
           IconButton(onPressed: () {}, icon: Icon(Icons.notifications)),
         ],
@@ -80,8 +80,7 @@ class MyBottomNavigationBar extends StatefulWidget {
   final Function(int) onItemTapped;
 
   MyBottomNavigationBar(
-      {required this.selectedIndex,
-      required this.onItemTapped}); 
+      {required this.selectedIndex, required this.onItemTapped});
 
   @override
   State<MyBottomNavigationBar> createState() => _MyBottomNavigationBarState();
@@ -118,7 +117,7 @@ class _MyBottomNavigationBarState extends State<MyBottomNavigationBar> {
         ),
       ],
       currentIndex: widget.selectedIndex,
-      selectedItemColor: Colors.blue,
+      selectedItemColor: Colors.green,
       showSelectedLabels: true,
       showUnselectedLabels: true,
       unselectedItemColor: Colors.grey,

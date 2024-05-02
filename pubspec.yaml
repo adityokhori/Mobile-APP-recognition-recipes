@@ -77,6 +77,8 @@ flutter:
     - assets/Models/labels.txt
     - assets/BeCipesLogo.png
     - assets/googleLogo.png
+    - assets/logoV.png
+    - assets/greenV.png
   
 
   # An image asset can refer to one or more resolution-specific "variants", see
@@ -94,6 +96,8 @@ flutter:
     - family: Roboto-Regular
       fonts:
         - asset: assets/fonts/Roboto-Regular.ttf
+        - asset: assets/fonts/SalmaproMedium-yw9ad.otf
+
 
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/custom-fonts/#from-packages

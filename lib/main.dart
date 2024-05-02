@@ -21,12 +21,21 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       home: AnimatedSplashScreen(
-        duration: 6000,
-        splash: Image.asset(
-          'assets/BeCipesLogo.png',
-          width: 150,
-          height: 100,
-        ),
+        duration: 3000,
+        splash: Center(
+            child: Text(
+          'greenv',
+          style: TextStyle(
+              fontSize: 60,
+              fontWeight: FontWeight.bold,
+              color: Colors.green,
+              fontFamily: 'SalmaproMedium-yw9ad'),
+        )
+            // Image.asset(
+            //   'assets/logoV.png',
+            //   color: Colors.green,
+            // ),
+            ),
         nextScreen: SignInPage(),
         splashTransition: SplashTransition.fadeTransition,
         pageTransitionType: PageTransitionType.fade,

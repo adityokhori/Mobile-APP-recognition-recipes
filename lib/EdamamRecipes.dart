@@ -181,7 +181,7 @@ class _EdamamRecipesState extends State<EdamamRecipes> {
                 SizedBox(height: 15),
                 ElevatedButton(
                   onPressed: _showFilterDialog,
-                  child: Text('Filter'),
+                  child: Text('Filter', style: TextStyle(color: Colors.green),),
                 ),
               ],
             ),

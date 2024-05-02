@@ -30,7 +30,10 @@ class _SignInPageState extends State<SignInPage> {
       child: Row(
         mainAxisSize: MainAxisSize.max,
         children: [
-          Icon(Icons.check, color: Colors.white,),
+          Icon(
+            Icons.check,
+            color: Colors.white,
+          ),
           SizedBox(width: 12),
           Expanded(
             child: Text(
@@ -66,7 +69,7 @@ class _SignInPageState extends State<SignInPage> {
                     Colors.white,
                     Colors.white,
                     Colors.white,
-                    Color.fromARGB(255, 123, 213, 255)
+                    Colors.green,
                   ],
                 ),
               ),
@@ -77,11 +80,13 @@ class _SignInPageState extends State<SignInPage> {
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: <Widget>[
-                        Image.asset('assets/BeCipesLogo.png'),
-                        Text(
-                          'Sign In',
-                          style: TextStyle(
-                              fontSize: 20, fontWeight: FontWeight.bold),
+                        SizedBox(
+                          width: 110,
+                          height: 110,
+                          child: Image.asset(
+                            'assets/logoV.png',
+                            color: Colors.green,
+                          ),
                         ),
                         SizedBox(
                           height: 20,
@@ -114,7 +119,7 @@ class _SignInPageState extends State<SignInPage> {
                         SizedBox(
                           height: 5,
                         ),
-                        forgotpassword(),
+                        forgotPassword(),
                         SizedBox(
                           height: 15,
                         ),
@@ -230,18 +235,42 @@ class _SignInPageState extends State<SignInPage> {
     );
   }
 
-  Container forgotpassword() {
+  Container forgotPassword() {
     return Container(
-        alignment: Alignment.centerRight,
-        child: GestureDetector(
-          onTap: () async {
-            if (_emailTextController.text.isEmpty) {
+      alignment: Alignment.centerRight,
+      child: GestureDetector(
+        onTap: () async {
+          if (_emailTextController.text.isEmpty) {
+            showDialog(
+              context: context,
+              builder: (BuildContext context) {
+                return AlertDialog(
+                  title: Text("Error"),
+                  content: Text("Please enter your email."),
+                  actions: <Widget>[
+                    ElevatedButton(
+                      child: Text("OK"),
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                      },
+                    ),
+                  ],
+                );
+              },
+            );
+          } else {
+            try {
+              await FirebaseAuth.instance.sendPasswordResetEmail(
+                email: _emailTextController.text,
+              );
               showDialog(
                 context: context,
                 builder: (BuildContext context) {
                   return AlertDialog(
-                    title: Text("Error"),
-                    content: Text("Please enter your email."),
+                    title: Text("Reset Password"),
+                    content: Text(
+                      "Please check your email to proceed with the password reset process.",
+                    ),
                     actions: <Widget>[
                       ElevatedButton(
                         child: Text("OK"),
@@ -253,16 +282,33 @@ class _SignInPageState extends State<SignInPage> {
                   );
                 },
               );
-            } else {
-              await FirebaseAuth.instance
-                  .sendPasswordResetEmail(email: _emailTextController.text);
+            } catch (error) {
+              showDialog(
+                context: context,
+                builder: (BuildContext context) {
+                  return AlertDialog(
+                    title: Text("Error"),
+                    content: Text(error.toString()),
+                    actions: <Widget>[
+                      ElevatedButton(
+                        child: Text("OK"),
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                        },
+                      ),
+                    ],
+                  );
+                },
+              );
             }
-          },
-          child: Text(
-            'forgot password?',
-            style: TextStyle(fontWeight: FontWeight.bold),
-          ),
-        ));
+          }
+        },
+        child: Text(
+          'Forgot Password?',
+          style: TextStyle(fontWeight: FontWeight.bold),
+        ),
+      ),
+    );
   }
 
   Container loginoption(BuildContext context) {

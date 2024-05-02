@@ -18,7 +18,7 @@ class _SignUpPageState extends State<SignUpPage> {
   final TextEditingController _confirmPasswordTextController =
       TextEditingController();
   bool _isPasswordHidden = true;
-  
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -27,7 +27,7 @@ class _SignUpPageState extends State<SignUpPage> {
           gradient: LinearGradient(
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
-            colors: [Colors.white, Colors.white, Colors.white,  Colors.lightBlue],
+            colors: [Colors.white, Colors.white, Colors.white, Colors.green],
           ),
         ),
         child: Center(
@@ -36,11 +36,15 @@ class _SignUpPageState extends State<SignUpPage> {
               padding: EdgeInsets.all(45),
               child: Column(
                 children: <Widget>[
-                  Image.asset('assets/BeCipesLogo.png'),
-                  Text(
-                    'Sign Up',
-                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                  SizedBox(
+                    width: 110,
+                    height: 110,
+                    child: Image.asset(
+                      'assets/logoV.png',
+                      color: Colors.green,
+                    ),
                   ),
+                  
                   SizedBox(
                     height: 20,
                   ),
@@ -74,9 +78,7 @@ class _SignUpPageState extends State<SignUpPage> {
                   SizedBox(
                     height: 20,
                   ),
-                  Stack(
-                    alignment: Alignment.centerRight,
-                    children: [
+                  Stack(alignment: Alignment.centerRight, children: [
                     reusTextField('Confirm Password', Icons.lock,
                         _isPasswordHidden, _confirmPasswordTextController),
                     IconButton(
@@ -196,8 +198,7 @@ class _SignUpPageState extends State<SignUpPage> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        Text('Already have an account?',
-            style: TextStyle(color: Colors.black)),
+        Text('Already have an account?', style: TextStyle(color: Colors.black)),
         GestureDetector(
           onTap: () {
             Navigator.push(
@@ -205,7 +206,9 @@ class _SignUpPageState extends State<SignUpPage> {
           },
           child: Text(
             ' Sign In',
-            style: TextStyle(color: Color.fromARGB(255, 19, 121, 255), fontWeight: FontWeight.bold),
+            style: TextStyle(
+                color: Color.fromARGB(255, 19, 121, 255),
+                fontWeight: FontWeight.bold),
           ),
         )
       ],

@@ -65,14 +65,12 @@ void _mergeAnalysisResults(Map<String, dynamic> analysis) {
   (_analysisResult['healthLabels'] as List).addAll(analysis['healthLabels'] ?? []);
   (_analysisResult['cautions'] as List).addAll(analysis['cautions'] ?? []);
 
-  // Menggabungkan nutrisi
   _mergeNutrients(_analysisResult['totalNutrients'], analysis['totalNutrients']);
 }
 
 void _mergeNutrients(Map<String, dynamic> existingNutrients, Map<String, dynamic>? newNutrients) {
   if (newNutrients == null) return;
 
-  // Iterasi melalui nutrisi baru dan menambahkannya ke nutrisi yang sudah ada
   newNutrients.forEach((key, value) {
     if (existingNutrients.containsKey(key)) {
       existingNutrients[key]['quantity'] += value['quantity'] ?? 0;
@@ -102,8 +100,6 @@ Widget _buildNutrientRow(String label, Map<String, dynamic>? nutrient) {
   );
 }
 
-
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -126,7 +122,7 @@ Widget _buildNutrientRow(String label, Map<String, dynamic>? nutrient) {
               onPressed: () {
                 _getNutritionAnalysis(_textInputController.text);
               },
-              child: Text('Analyze'),
+              child: Text('Analyze', style: TextStyle(color: Colors.green),),
             ),
             SizedBox(height: 16.0),
             Expanded(
