@@ -1,41 +1,83 @@
-import 'package:firebase_core/firebase_core.dart';
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:grinv/firebase_options.dart';
+import 'package:firebase_core/firebase_core.dart';
 import './sign_in_page.dart';
-import 'package:animated_splash_screen/animated_splash_screen.dart';
-import 'package:page_transition/page_transition.dart';
+import 'package:grinv/open_bottom.dart';
 
-Future<void> main() async {
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
-  runApp(const MyApp());
+  runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({Key? key});
-
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: AnimatedSplashScreen(
-        duration: 3000,
-        splash: Center(
-          child: Transform.scale(
-            scale: 1.2,
-            child: Image.asset(
-              'assets/logoV.png',
-              color: Colors.green,
-            ),
-          ),
-        ),
-        nextScreen: SignInPage(),
-        splashTransition: SplashTransition.fadeTransition,
-        pageTransitionType: PageTransitionType.fade,
-        backgroundColor: Colors.white,
+      home: FutureBuilder(
+        future: stayApp(), 
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return SplashScreen(); 
+          } else {
+            if (snapshot.hasError) {
+              return ErrorScreen(); 
+            } else {
+              final bool isLoggedIn = snapshot.data ?? false;
+              if (isLoggedIn) {
+                return OpenButtom();
+              } else {
+                return SignInPage();
+              }
+            }
+          }
+        },
       ),
     );
+  }
+}
+
+class SplashScreen extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: Colors.white,
+      body: Center(
+        child: Image.asset(
+          'assets/logoV.png',
+          color: Colors.green,
+          width: 100,
+          height: 100, 
+        ),
+      ),
+    );
+  }
+}
+
+class ErrorScreen extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Center(
+        child: Text('Error occurred!'),
+      ),
+    );
+  }
+}
+
+Future<bool> stayApp() async {
+  SharedPrefService sharedPrefService = SharedPrefService();
+  String? value = await sharedPrefService.readCache(key: "email");
+  await Future.delayed(const Duration(seconds: 3));
+  if (value != null) {
+    print('read dulu Y');
+    return true; 
+  } else {
+    print('read dulu G');
+    return false;
   }
 }

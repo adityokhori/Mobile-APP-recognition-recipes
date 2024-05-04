@@ -12,7 +12,7 @@ class SharedPrefService {
     print('write dulu');
     final SharedPreferences pref = await SharedPreferences.getInstance();
     bool isSaved = await pref.setString(key, value);
-    debugPrint(isSaved.toString());
+    debugPrint("PREF IS SAVED ${isSaved.toString()}");
   }
 
   Future<String?> readCache({required String key}) async {
@@ -29,6 +29,7 @@ class SharedPrefService {
     print('removed dulu');
     final SharedPreferences pref = await SharedPreferences.getInstance();
     bool? isCleared = await pref.clear();
+    debugPrint("PREF IS REMOVED ${isCleared.toString()}");
     return isCleared;
   }
 }
@@ -46,19 +47,6 @@ class _SignInPageState extends State<SignInPage> {
   bool _isPasswordHidden = true;
   bool _isLoading = false;
 
-  initSplash() async {
-    SharedPrefService sharedPrefService = SharedPrefService();
-    String? value = await sharedPrefService.readCache(key: "email");
-    Future.delayed(const Duration(seconds: 2), () {
-      if (value != null) {
-        Navigator.push(
-            context, MaterialPageRoute(builder: (context) => OpenButtom()));
-      } else {
-        Navigator.push(context,
-            MaterialPageRoute(builder: (context) => const SignInPage()));
-      }
-    });
-  }
 
   showCustom(BuildContext context, User user) {
     FToast fToast = FToast();
@@ -385,7 +373,7 @@ class _SignInPageState extends State<SignInPage> {
                       MaterialPageRoute(builder: (context) => OpenButtom()),
                     );
                   } else {
-                    // Handle error ketika user null
+                    // Handle null
                   }
                 } else {
                   Navigator.pushReplacement(
