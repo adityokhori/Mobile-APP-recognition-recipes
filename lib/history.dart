@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:Becipes/food_history.dart';
-import 'package:Becipes/recipe_history.dart';
-import 'package:Becipes/scan_history.dart';
+import 'package:grinv/food_history.dart';
+import 'package:grinv/recipe_history.dart';
+import 'package:grinv/scan_history.dart';
 
 class HistoryPage extends StatefulWidget {
   @override
@@ -36,7 +36,7 @@ class _HistoryPageState extends State<HistoryPage> {
               onPageChanged: (index) {
                 setState(() {
                   _selectedButton =
-                      index; // Perbarui _selectedButton saat halaman berubah
+                      index; 
                 });
               },
               children: [

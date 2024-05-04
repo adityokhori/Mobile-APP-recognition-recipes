@@ -1,10 +1,37 @@
 import 'package:flutter/material.dart';
 import 'reusable_widget/reusable_widget.dart';
-import 'package:Becipes/sign_up_page.dart';
+import 'package:grinv/sign_up_page.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:Becipes/service/firebase_services.dart';
+import 'package:grinv/service/firebase_services.dart';
 import 'open_bottom.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
+class SharedPrefService {
+  Future writeCache({required String key, required String value}) async {
+    print('write dulu');
+    final SharedPreferences pref = await SharedPreferences.getInstance();
+    bool isSaved = await pref.setString(key, value);
+    debugPrint(isSaved.toString());
+  }
+
+  Future<String?> readCache({required String key}) async {
+    print('read dulu');
+    final SharedPreferences pref = await SharedPreferences.getInstance();
+    String? value = pref.getString(key);
+    if (value != null) {
+      return value;
+    }
+    return null;
+  }
+
+  Future<bool> removeCache({required String key}) async {
+    print('removed dulu');
+    final SharedPreferences pref = await SharedPreferences.getInstance();
+    bool? isCleared = await pref.clear();
+    return isCleared;
+  }
+}
 
 class SignInPage extends StatefulWidget {
   const SignInPage({super.key});
@@ -13,10 +40,25 @@ class SignInPage extends StatefulWidget {
 }
 
 class _SignInPageState extends State<SignInPage> {
+  SharedPrefService sharedPrefService = SharedPrefService();
   final TextEditingController _emailTextController = TextEditingController();
   final TextEditingController _passwordTextController = TextEditingController();
   bool _isPasswordHidden = true;
   bool _isLoading = false;
+
+  initSplash() async {
+    SharedPrefService sharedPrefService = SharedPrefService();
+    String? value = await sharedPrefService.readCache(key: "email");
+    Future.delayed(const Duration(seconds: 2), () {
+      if (value != null) {
+        Navigator.push(
+            context, MaterialPageRoute(builder: (context) => OpenButtom()));
+      } else {
+        Navigator.push(context,
+            MaterialPageRoute(builder: (context) => const SignInPage()));
+      }
+    });
+  }
 
   showCustom(BuildContext context, User user) {
     FToast fToast = FToast();
@@ -69,7 +111,9 @@ class _SignInPageState extends State<SignInPage> {
                     Colors.white,
                     Colors.white,
                     Colors.white,
-                    Colors.green,
+                    Colors.white,
+                    Colors.white,
+                    Colors.lightGreen,
                   ],
                 ),
               ),
@@ -127,8 +171,7 @@ class _SignInPageState extends State<SignInPage> {
                           setState(() {
                             _isLoading = true;
                           });
-                          await Future.delayed(Duration(
-                              seconds: 2)); // Menahan proses selama 2 detik
+                          await Future.delayed(Duration(seconds: 2));
                           FirebaseAuth.instance
                               .signInWithEmailAndPassword(
                             email: _emailTextController.text,
@@ -137,9 +180,13 @@ class _SignInPageState extends State<SignInPage> {
                               .then((value) {
                             if (value.user != null &&
                                 value.user!.emailVerified) {
-                              // Sign in berhasil
                               print('Login Success');
                               showCustom(context, value.user!);
+
+                              sharedPrefService.writeCache(
+                                  key: "email",
+                                  value: _emailTextController.text);
+
                               Navigator.pushReplacement(
                                 context,
                                 MaterialPageRoute(
@@ -147,7 +194,6 @@ class _SignInPageState extends State<SignInPage> {
                                 ),
                               );
                             } else {
-                              // Email belum diverifikasi
                               showDialog(
                                 context: context,
                                 builder: (BuildContext context) {
@@ -206,7 +252,7 @@ class _SignInPageState extends State<SignInPage> {
                                 return AlertDialog(
                                   title: const Text("Error"),
                                   content: Text(
-                                      'UDAH SIGN UP BELOM!, MASUKIN DATA YANG BENER, TYPO MUNGKIN'),
+                                      'Wrong email or password.\nTry again please..'),
                                   actions: [
                                     ElevatedButton(
                                       onPressed: () {
@@ -224,8 +270,12 @@ class _SignInPageState extends State<SignInPage> {
                             });
                           });
                         }),
-                        signupoption(),
+                        Text('Or sign in with'),
                         loginoption(context),
+                        SizedBox(
+                          height: 20,
+                        ),
+                        signupoption(),
                       ],
                     ),
                   ),

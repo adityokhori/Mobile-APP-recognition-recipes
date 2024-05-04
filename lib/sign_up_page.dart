@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'reusable_widget/reusable_widget.dart';
-import 'package:Becipes/sign_in_page.dart';
+import 'package:grinv/sign_in_page.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 class SignUpPage extends StatefulWidget {
@@ -27,7 +27,7 @@ class _SignUpPageState extends State<SignUpPage> {
           gradient: LinearGradient(
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
-            colors: [Colors.white, Colors.white, Colors.white, Colors.green],
+            colors: [Colors.white, Colors.white, Colors.white, Colors.white,Colors.white, Colors.lightGreen],
           ),
         ),
         child: Center(

@@ -55,7 +55,7 @@ class _BottomNavigationState extends State<BottomNavigation> {
               BlendMode.srcIn,
             ),
             child: Text(
-              'greenv',
+              'grinv',
               style: TextStyle(
                   fontSize: 40,
                   fontWeight: FontWeight.bold,

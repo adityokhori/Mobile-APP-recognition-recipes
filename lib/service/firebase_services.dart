@@ -5,6 +5,7 @@ class FirebaseServices {
   final _auth = FirebaseAuth.instance;
   final _googleSignIn = GoogleSignIn();
 
+  // Fungsi untuk masuk dengan Google
   Future<bool> signInWithGoogle() async {
     try {
       final GoogleSignInAccount? googleSignInAccount =
@@ -16,10 +17,10 @@ class FirebaseServices {
             accessToken: googleSignInAuthentication.accessToken,
             idToken: googleSignInAuthentication.idToken);
         await _auth.signInWithCredential(authCredential);
-        return true; // Return true if login successful
+        return true;
       } else {
         print("Proses masuk dengan Google dibatalkan.");
-        return false; // Return false if login canceled
+        return false;
       }
     } on FirebaseAuthException catch (e) {
       print(e.message);
@@ -27,8 +28,9 @@ class FirebaseServices {
     }
   }
 
-  signOut() async {
+  Future<void> signOut() async {
     await _auth.signOut();
     await _googleSignIn.signOut();
   }
+
 }

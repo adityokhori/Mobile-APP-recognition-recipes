@@ -4,11 +4,10 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:Becipes/service/firebase_services.dart';
-import 'package:Becipes/sign_in_page.dart';
+import 'package:grinv/service/firebase_services.dart';
+import 'package:grinv/sign_in_page.dart';
 
 class MyAccount extends StatefulWidget {
-
   const MyAccount({super.key});
 
   @override
@@ -19,6 +18,7 @@ class _MyAccountState extends State<MyAccount> {
   late String _displayName;
   late String _email;
   late String _photoURL = '';
+  SharedPrefService sharedPrefService = SharedPrefService();
 
   final imagePicker = ImagePicker();
   final TextEditingController _displayNameController = TextEditingController();
@@ -54,16 +54,16 @@ class _MyAccountState extends State<MyAccount> {
     }
   }
 
-Future<void> _changeProfile() async {
-  User? user = FirebaseAuth.instance.currentUser;
-  if (user != null) {
-    await user.updateDisplayName(_displayNameController.text);
+  Future<void> _changeProfile() async {
+    User? user = FirebaseAuth.instance.currentUser;
+    if (user != null) {
+      await user.updateDisplayName(_displayNameController.text);
 
-    setState(() {
-      _displayName = _displayNameController.text;
-    });
+      setState(() {
+        _displayName = _displayNameController.text;
+      });
+    }
   }
-}
 
   Future<File?> _pickAndUploadImage() async {
     final XFile? image =
@@ -80,8 +80,9 @@ Future<void> _changeProfile() async {
         File imageFile = File(image.path);
         String userId = user.uid;
 
-        final Reference ref = FirebaseStorage.instance.ref().child(
-            'users/$userId/profile_images/$imageFile'); 
+        final Reference ref = FirebaseStorage.instance
+            .ref()
+            .child('users/$userId/profile_images/$imageFile');
 
         print(ref);
         print('INTANCE SUKSES');
@@ -112,9 +113,8 @@ Future<void> _changeProfile() async {
         return null;
       }
     }
-    return null; 
+    return null;
   }
-
 
   Future<void> _showChangeDisplayNameDialog(BuildContext context) async {
     _displayNameController.text = _displayName;
@@ -137,7 +137,7 @@ Future<void> _changeProfile() async {
               child: Text('Cancel'),
             ),
             TextButton(
-              onPressed: () async{
+              onPressed: () async {
                 setState(() {
                   _displayName = _displayNameController.text;
                 });
@@ -190,7 +190,10 @@ Future<void> _changeProfile() async {
               onPressed: () async {
                 await _showChangeDisplayNameDialog(context);
               },
-              child: Text('Change Display Name'),
+              child: Text(
+                'Change Display Name',
+                style: TextStyle(color: Colors.black),
+              ),
             ),
             ElevatedButton(
               onPressed: () async {
@@ -198,13 +201,21 @@ Future<void> _changeProfile() async {
                     await _showSignOutConfirmationDialog(context);
                 if (confirmSignOut) {
                   await FirebaseServices().signOut();
-                  Navigator.pushReplacement(
-                    context,
-                    MaterialPageRoute(builder: (context) => const SignInPage()),
-                  );
+                  bool isRemoved =
+                      await sharedPrefService.removeCache(key: "email");
+                  if (isRemoved) {
+                    Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => const SignInPage()),
+                    );
+                  }
                 }
               },
-              child: Text('Sign Out'),
+              child: Text(
+                'Sign Out',
+                style: TextStyle(color: Colors.red),
+              ),
             ),
           ],
         ),
@@ -222,15 +233,13 @@ Future<void> _changeProfile() async {
               actions: <Widget>[
                 TextButton(
                   onPressed: () {
-                    Navigator.of(context)
-                        .pop(false); 
+                    Navigator.of(context).pop(false);
                   },
                   child: Text('Cancel'),
                 ),
-                 TextButton(
+                TextButton(
                   onPressed: () {
-                    Navigator.of(context)
-                        .pop(true); 
+                    Navigator.of(context).pop(true);
                   },
                   child: Text('Sign Out'),
                 ),
