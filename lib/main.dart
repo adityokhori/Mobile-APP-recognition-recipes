@@ -2,7 +2,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:grinv/firebase_options.dart';
 import 'package:firebase_core/firebase_core.dart';
-import './sign_in_page.dart';
+import 'package:grinv/sign_in_page.dart';
 import 'package:grinv/open_bottom.dart';
 
 void main() async {

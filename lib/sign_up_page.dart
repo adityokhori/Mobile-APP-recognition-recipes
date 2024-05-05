@@ -37,8 +37,8 @@ class _SignUpPageState extends State<SignUpPage> {
               child: Column(
                 children: <Widget>[
                   SizedBox(
-                    width: 110,
-                    height: 110,
+                    width: 80,
+                    height: 80,
                     child: Image.asset(
                       'assets/logoV.png',
                       color: Colors.green,

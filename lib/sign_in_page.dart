@@ -47,7 +47,6 @@ class _SignInPageState extends State<SignInPage> {
   bool _isPasswordHidden = true;
   bool _isLoading = false;
 
-
   showCustom(BuildContext context, User user) {
     FToast fToast = FToast();
     fToast.init(context);
@@ -113,8 +112,8 @@ class _SignInPageState extends State<SignInPage> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: <Widget>[
                         SizedBox(
-                          width: 110,
-                          height: 110,
+                          width: 80,
+                          height: 80,
                           child: Image.asset(
                             'assets/logoV.png',
                             color: Colors.green,
@@ -368,6 +367,9 @@ class _SignInPageState extends State<SignInPage> {
                   User? user = FirebaseAuth.instance.currentUser;
                   if (user != null) {
                     showCustom(context, user);
+                    sharedPrefService.writeCache(
+                        key: "email", value: _emailTextController.text);
+
                     Navigator.push(
                       context,
                       MaterialPageRoute(builder: (context) => OpenButtom()),
@@ -385,7 +387,8 @@ class _SignInPageState extends State<SignInPage> {
                   _isLoading = false;
                 });
               },
-              child: Image.asset(
+              child: 
+              Image.asset(
                 'assets/googleLogo.png',
                 fit: BoxFit.cover,
               ),

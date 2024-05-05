@@ -96,7 +96,7 @@ class _RecognitionState extends State<Recognition> {
                     child: DottedBorder(
                         borderType: BorderType.RRect,
                         radius: const Radius.circular(12),
-                        color: Colors.blueGrey,
+                        color: Colors.green,
                         strokeWidth: 1,
                         dashPattern: const [5, 5],
                         child: SizedBox.expand(
@@ -104,10 +104,12 @@ class _RecognitionState extends State<Recognition> {
                             child: imageFile != null
                                 ? Image.file(File(imageFile!.path),
                                     fit: BoxFit.cover)
-                                : const Icon(
-                                    Icons.image_outlined,
-                                    color: Colors.blueGrey,
-                                  ),
+                                : Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: const Text(
+                                      'Your image will appear here after you upload it',style: TextStyle(fontSize: 8),
+                                    ),
+                                ),
                           ),
                         )),
                   ),
@@ -124,7 +126,7 @@ class _RecognitionState extends State<Recognition> {
                             color: Colors.blueGrey),
                         child: Material(
                           borderRadius: BorderRadius.circular(20),
-                          color: Colors.transparent,
+                          color: Colors.white,
                           child: InkWell(
                             splashColor: Colors.transparent,
                             highlightColor: Colors.transparent,
@@ -135,8 +137,9 @@ class _RecognitionState extends State<Recognition> {
                               child: Text(
                                 'Pick Image',
                                 style: TextStyle(
-                                    color: Colors.white,
-                                    fontWeight: FontWeight.bold),
+                                    color: Colors.green,
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 16),
                               ),
                             ),
                           ),
@@ -157,7 +160,7 @@ class _RecognitionState extends State<Recognition> {
                             color: Colors.blueGrey),
                         child: Material(
                           borderRadius: BorderRadius.circular(20),
-                          color: Colors.transparent,
+                          color: Colors.white,
                           child: InkWell(
                             splashColor: Colors.transparent,
                             highlightColor: Colors.transparent,
@@ -171,8 +174,9 @@ class _RecognitionState extends State<Recognition> {
                               child: Text(
                                 'Clear Image',
                                 style: TextStyle(
-                                    color: Colors.white,
-                                    fontWeight: FontWeight.bold),
+                                    color: Colors.green,
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 16),
                               ),
                             ),
                           ),
@@ -196,7 +200,7 @@ class _RecognitionState extends State<Recognition> {
                             color: Colors.blueGrey),
                         child: Material(
                           borderRadius: BorderRadius.circular(20),
-                          color: Colors.transparent,
+                          color: Colors.white,
                           child: InkWell(
                             splashColor: Colors.transparent,
                             highlightColor: Colors.transparent,
@@ -207,8 +211,9 @@ class _RecognitionState extends State<Recognition> {
                               child: Text(
                                 'Process Image',
                                 style: TextStyle(
-                                    color: Colors.white,
-                                    fontWeight: FontWeight.bold),
+                                    color: Colors.green,
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 16),
                               ),
                             ),
                           ),
@@ -274,7 +279,7 @@ class _RecognitionState extends State<Recognition> {
         context: context,
         builder: (BuildContext context) {
           return SimpleDialog(
-            title: const Text('Select Action'),
+            title: const Text('Select Option'),
             children: [
               SimpleDialogOption(
                 onPressed: () {
