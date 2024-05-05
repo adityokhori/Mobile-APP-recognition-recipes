@@ -6,6 +6,7 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:grinv/service/firebase_services.dart';
 import 'package:grinv/sign_in_page.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class MyAccount extends StatefulWidget {
   const MyAccount({super.key});
@@ -15,9 +16,11 @@ class MyAccount extends StatefulWidget {
 }
 
 class _MyAccountState extends State<MyAccount> {
-  late String _displayName;
-  late String _email;
+  late String _displayName = '';
+  late String _email = '';
+  late String _point = '';
   late String _photoURL = '';
+
   SharedPrefService sharedPrefService = SharedPrefService();
 
   final imagePicker = ImagePicker();
@@ -32,10 +35,18 @@ class _MyAccountState extends State<MyAccount> {
   void _getUserInfo() async {
     User? user = FirebaseAuth.instance.currentUser;
     if (user != null) {
+      DocumentSnapshot userDoc = await FirebaseFirestore.instance
+          .collection('users')
+          .doc(user.uid)
+          .get();
+      var pointQuiz =
+          (userDoc.data() as Map<String, dynamic>)['point_quiz'] ?? 0;
+
       setState(() {
         _displayName = user.displayName ?? '';
         _email = user.email ?? '';
         _photoURL = user.photoURL ?? '';
+        _point = pointQuiz.toString();
       });
     }
   }
@@ -183,6 +194,13 @@ class _MyAccountState extends State<MyAccount> {
             SizedBox(height: 10),
             Text(
               _email,
+              style: TextStyle(fontSize: 18),
+            ),
+            SizedBox(
+              height: 20,
+            ),
+            Text(
+              'My point: $_point',
               style: TextStyle(fontSize: 18),
             ),
             SizedBox(height: 20),
