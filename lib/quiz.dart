@@ -1,53 +1,102 @@
 import 'package:flutter/material.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:grinv/start_quiz.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class QuizPage extends StatefulWidget {
-  const QuizPage({super.key});
+  const QuizPage({Key? key}) : super(key: key);
 
   @override
   State<QuizPage> createState() => _QuizPageState();
 }
 
 class _QuizPageState extends State<QuizPage> {
+  Future<bool> _isQuizAccessible() async {
+    DateTime now = DateTime.now();
+
+    DateTime sessionNoonStart = DateTime(now.year, now.month, now.day, 12, 0, 0);
+    DateTime sessionNoonEnd = DateTime(now.year, now.month, now.day, 15, 0, 0);
+    DateTime sessionEveningStart = DateTime(now.year, now.month, now.day, 18, 0, 0);
+    DateTime sessionEveningEnd = DateTime(now.year, now.month, now.day, 21, 0, 0);
+
+    bool isAccessible = (now.isAfter(sessionNoonStart) && now.isBefore(sessionNoonEnd)) ||
+        (now.isAfter(sessionEveningStart) && now.isBefore(sessionEveningEnd));
+
+    if (isAccessible) {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      bool hasAccessedToday = prefs.getBool('hasAccessedToday') ?? false;
+      if (hasAccessedToday) {
+        return false; // Sudah mengakses, tidak bisa lagi
+      } else {
+        return true; // Belum mengakses, masih bisa
+      }
+    } else {
+      return false; // Di luar jangka waktu akses
+    }
+  }
+
+  _markQuizAccessed() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setBool('hasAccessedToday', true);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        backgroundColor: Color.fromARGB(255, 155, 92, 167),
-        body: Center(
-          child: Column(
-            children: [
-              ElevatedButton(
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => PlayQuiz(),
-                      ),
-                    );
-                  },
-                  child: Text(
-                    'Create Quiz',
-                    style: TextStyle(fontSize: 20),
-                  )),
-              ElevatedButton(
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => StartQuiz(),
-                      ),
-                    );
-                  },
+      backgroundColor: Color.fromARGB(255, 155, 92, 167),
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            ElevatedButton(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => PlayQuiz(),
+                  ),
+                );
+              },
+              child: Text(
+                'Create Quiz',
+                style: TextStyle(fontSize: 20),
+              ),
+            ),
+            SizedBox(height: 20),
+            FutureBuilder<bool>(
+              future: _isQuizAccessible(),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return CircularProgressIndicator();
+                }
+                bool isAccessible = snapshot.data ?? false;
+                return ElevatedButton(
+                  onPressed: isAccessible
+                      ? () {
+                          _markQuizAccessed(); // Menandai bahwa quiz telah diakses
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => StartQuiz(),
+                            ),
+                          );
+                        }
+                      : null, // Menonaktifkan tombol jika di luar jangka waktu akses atau sudah diakses
                   child: Text(
                     'Start Quiz',
                     style: TextStyle(fontSize: 20),
-                  )),
-            ],
-          ),
-        ));
+                  ),
+                );
+              },
+            ),
+          ],
+        ),
+      ),
+    );
   }
 }
+
+
 
 class PlayQuiz extends StatefulWidget {
   @override
