@@ -73,7 +73,7 @@ class _QuizPageState extends State<QuizPage> {
                 return ElevatedButton(
                   onPressed: isAccessible
                       ? () {
-                          _markQuizAccessed(); // Menandai bahwa quiz telah diakses
+                          _markQuizAccessed();
                           Navigator.push(
                             context,
                             MaterialPageRoute(
@@ -81,7 +81,7 @@ class _QuizPageState extends State<QuizPage> {
                             ),
                           );
                         }
-                      : null, // Menonaktifkan tombol jika di luar jangka waktu akses atau sudah diakses
+                      : null, 
                   child: Text(
                     'Start Quiz',
                     style: TextStyle(fontSize: 20),
@@ -95,8 +95,6 @@ class _QuizPageState extends State<QuizPage> {
     );
   }
 }
-
-
 
 class PlayQuiz extends StatefulWidget {
   @override
@@ -206,7 +204,7 @@ class _PlayQuizState extends State<PlayQuiz> {
                 controller: _pointController,
                 keyboardType: TextInputType.number,
                 decoration: InputDecoration(
-                    labelText: 'Point'), // Tambahkan input untuk point
+                    labelText: 'Point'), 
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return 'Please enter the point';

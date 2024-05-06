@@ -163,7 +163,7 @@ class _MyAccountState extends State<MyAccount> {
     );
   }
 
-  @override
+@override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Center(
@@ -203,7 +203,15 @@ class _MyAccountState extends State<MyAccount> {
               'My point: $_point',
               style: TextStyle(fontSize: 18),
             ),
-            SizedBox(height: 20),
+            ElevatedButton(
+              onPressed: () {
+                _showPointChangeDialog(context);
+              },
+              child: Text(
+                'Change Your Point',
+                style: TextStyle(color: Colors.black),
+              ),
+            ),
             ElevatedButton(
               onPressed: () async {
                 await _showChangeDisplayNameDialog(context);
@@ -240,6 +248,114 @@ class _MyAccountState extends State<MyAccount> {
       ),
     );
   }
+
+  void _showPointChangeDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text("Change Your Point"),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              ListTile(
+                title: Text("Nutrition Analysis"),
+                onTap: () {
+                  _selectNutritionAnalysis(context);
+                },
+              ),
+              ListTile(
+                title: Text("Book Recipes"),
+                onTap: () {
+                  _selectBookRecipes(context);
+                },
+              ),
+            ],
+          ),
+          actions: [
+            ElevatedButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: Text("Cancel"),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void _selectBookRecipes(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text("Book recipes"),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              ListTile(
+                title: Text("3 days"),
+                onTap: () {
+                  Navigator.of(context).pop();
+                },
+              ),
+              ListTile(
+                title: Text("7 days"),
+                onTap: () {
+                  Navigator.of(context).pop();
+                },
+              ),
+            ],
+          ),
+          actions: [
+            ElevatedButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: Text("Cancel"),
+            ),
+          ],
+        );
+      },
+    );
+  }
+  void _selectNutritionAnalysis(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text("Nutrition Analysis"),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              ListTile(
+                title: Text("3 days"),
+                onTap: () {
+                  Navigator.of(context).pop();
+                },
+              ),
+              ListTile(
+                title: Text("7 days"),
+                onTap: () {
+                  Navigator.of(context).pop();
+                },
+              ),
+            ],
+          ),
+          actions: [
+            ElevatedButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: Text("Cancel"),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
 
   Future<bool> _showSignOutConfirmationDialog(BuildContext context) async {
     return await showDialog<bool>(
