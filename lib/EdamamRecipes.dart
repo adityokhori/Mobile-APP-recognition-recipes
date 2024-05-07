@@ -157,6 +157,9 @@ class _EdamamRecipesState extends State<EdamamRecipes> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        title: Text('Book Recipes'),
+      ),
       body: Column(
         children: [
           Padding(

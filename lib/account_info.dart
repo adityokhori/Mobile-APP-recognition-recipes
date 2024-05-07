@@ -1,5 +1,4 @@
 import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
@@ -107,9 +106,8 @@ class _MyAccountState extends State<MyAccount> {
             _photoURL = photoURL;
             print('BERHASIL MEMPERBARUI STATE');
           });
-
           print('Gambar berhasil diunggah dan URL foto profil diperbarui');
-          return imageFile; // Mengembalikan File yang telah diunggah
+          return imageFile;
         } catch (e) {
           print('Kesalahan: $e');
           ScaffoldMessenger.of(context).showSnackBar(
@@ -117,7 +115,7 @@ class _MyAccountState extends State<MyAccount> {
               content: Text('Gagal mengunggah atau memperbarui foto profil.'),
             ),
           );
-          return null; // Mengembalikan null jika terjadi kesalahan
+          return null;
         }
       } else {
         print('Pengguna belum masuk');
@@ -313,7 +311,7 @@ class _MyAccountState extends State<MyAccount> {
               onPressed: () {
                 Navigator.of(context).pop();
               },
-              child: Text("Cancel"),
+              child: Text("Back"),
             ),
           ],
         );
@@ -348,14 +346,13 @@ class _MyAccountState extends State<MyAccount> {
               onPressed: () {
                 Navigator.of(context).pop();
               },
-              child: Text("Cancel"),
+              child: Text("Back"),
             ),
           ],
         );
       },
     );
   }
-
 
   Future<bool> _showSignOutConfirmationDialog(BuildContext context) async {
     return await showDialog<bool>(

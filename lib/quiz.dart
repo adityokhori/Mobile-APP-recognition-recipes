@@ -18,7 +18,6 @@ class _QuizPageState extends State<QuizPage> {
     DateTime sessionNoonEnd = DateTime(now.year, now.month, now.day, 15, 0, 0);
     DateTime sessionEveningStart = DateTime(now.year, now.month, now.day, 18, 0, 0);
     DateTime sessionEveningEnd = DateTime(now.year, now.month, now.day, 21, 0, 0);
-
     bool isAccessible = (now.isAfter(sessionNoonStart) && now.isBefore(sessionNoonEnd)) ||
         (now.isAfter(sessionEveningStart) && now.isBefore(sessionEveningEnd));
 
@@ -26,12 +25,12 @@ class _QuizPageState extends State<QuizPage> {
       SharedPreferences prefs = await SharedPreferences.getInstance();
       bool hasAccessedToday = prefs.getBool('hasAccessedToday') ?? false;
       if (hasAccessedToday) {
-        return false; // Sudah mengakses, tidak bisa lagi
+        return false;
       } else {
-        return true; // Belum mengakses, masih bisa
+        return true; 
       }
     } else {
-      return false; // Di luar jangka waktu akses
+      return false;
     }
   }
 

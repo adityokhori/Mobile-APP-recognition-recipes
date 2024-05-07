@@ -37,15 +37,11 @@ class _BottomNavigationState extends State<BottomNavigation> {
   Widget build(BuildContext context) {
     Widget body = _selectedIndex == 0
         ? QuizPage()
-        : _selectedIndex == 1
-            ? NutritionAnalysisPage()
-            : _selectedIndex == 2
-                ? EdamamRecipes()
-                : _selectedIndex == 3
-                    ? HistoryPage()
-                    : _selectedIndex == 4
-                        ? Recognition()
-                        : MyAccount();
+          : _selectedIndex == 1
+            ? HistoryPage()
+              : _selectedIndex == 2
+                ? Recognition()
+                  : MyAccount();
 
     return Scaffold(
       appBar: AppBar(
@@ -66,7 +62,41 @@ class _BottomNavigationState extends State<BottomNavigation> {
           IconButton(onPressed: () {}, icon: Icon(Icons.notifications)),
         ],
       ),
-      body: body,
+      body: Stack( 
+        children: [
+          body,
+          Positioned( 
+            bottom: 80, 
+            right: 16,
+            child: FloatingActionButton(
+              heroTag: 'buttonAnalysis',
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => NutritionAnalysisPage()),
+                );
+              },
+              child: Icon(Icons.analytics, color: Colors.white,),
+              backgroundColor: Colors.green, 
+            ),
+          ),
+          Positioned( 
+            bottom: 16, 
+            right: 16, 
+            child: FloatingActionButton(
+              heroTag: 'buttonRecipes',
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => EdamamRecipes()),
+                );
+              },
+              child: Icon(Icons.receipt, color: Colors.white,),
+              backgroundColor: Colors.green,
+            ),
+          ),
+        ],
+      ),
       bottomNavigationBar: MyBottomNavigationBar(
         selectedIndex: _selectedIndex,
         onItemTapped: _onItemTapped,
@@ -96,14 +126,6 @@ class _MyBottomNavigationBarState extends State<MyBottomNavigationBar> {
           label: 'Quiz',
         ),
         BottomNavigationBarItem(
-          icon: Icon(Icons.analytics),
-          label: 'Analysis',
-        ),
-        BottomNavigationBarItem(
-          icon: Icon(Icons.receipt),
-          label: 'Recipes',
-        ),
-        BottomNavigationBarItem(
           icon: Icon(Icons.history),
           label: 'History',
         ),
@@ -122,6 +144,7 @@ class _MyBottomNavigationBarState extends State<MyBottomNavigationBar> {
       showUnselectedLabels: true,
       unselectedItemColor: Colors.grey,
       onTap: widget.onItemTapped,
+      type: BottomNavigationBarType.fixed,
     );
   }
 }
