@@ -15,12 +15,14 @@ class MyAccount extends StatefulWidget {
 }
 
 class _MyAccountState extends State<MyAccount> {
+  
   late String _displayName = '';
   late String _email = '';
   late String _point = '';
   late String _photoURL = '';
 
   SharedPrefService sharedPrefService = SharedPrefService();
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
   final imagePicker = ImagePicker();
   final TextEditingController _displayNameController = TextEditingController();
@@ -29,6 +31,32 @@ class _MyAccountState extends State<MyAccount> {
   void initState() {
     super.initState();
     _getUserInfo();
+  }
+Future<void> _updateFirebaseAttribute(String option, bool value) async {
+    try {
+      User? user = FirebaseAuth.instance.currentUser;
+      if (user != null) {
+        await _firestore.collection('users').doc(user.uid).update({
+          option: value,
+        });
+        print('Berhasil memperbarui nilai $option di Firestore.');
+      }
+    } catch (e) {
+      print('Gagal memperbarui nilai $option di Firestore: $e');
+    }
+  }
+
+   void _onOptionSelected(String option) async {
+    // Update nilai opsi yang dipilih di Firestore
+    if (option == 'optionAnalysis 1 Hour') {
+      await _updateFirebaseAttribute('optionAnalysis 1 Hour', true);
+    } else if (option == 'optionAnalysis 2 Hours') {
+      await _updateFirebaseAttribute('optionAnalysis 2 Hours', true);
+    } else if (option == 'optionRecipes 1 Hour') {
+      await _updateFirebaseAttribute('optionRecipes 1 Hour', true);
+    } else if (option == 'optionRecipes 2 Hours') {
+      await _updateFirebaseAttribute('optionRecipes 2 Hours', true);
+    }
   }
 
   void _getUserInfo() async {
@@ -201,6 +229,9 @@ class _MyAccountState extends State<MyAccount> {
               'My point: $_point',
               style: TextStyle(fontSize: 18),
             ),
+            SizedBox(
+              height: 10,
+            ),
             ElevatedButton(
               onPressed: () {
                 _showPointChangeDialog(context);
@@ -247,7 +278,7 @@ class _MyAccountState extends State<MyAccount> {
     );
   }
 
-  void _showPointChangeDialog(BuildContext context) {
+   void _showPointChangeDialog(BuildContext context) {
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -282,8 +313,7 @@ class _MyAccountState extends State<MyAccount> {
       },
     );
   }
-
-  void _selectBookRecipes(BuildContext context) {
+    void _selectBookRecipes(BuildContext context) {
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -293,15 +323,15 @@ class _MyAccountState extends State<MyAccount> {
             mainAxisSize: MainAxisSize.min,
             children: [
               ListTile(
-                title: Text("3 days"),
+                title: Text("1 Hour"),
                 onTap: () {
-                  Navigator.of(context).pop();
+                  _onOptionSelected('optionRecipes 1 Hour');
                 },
               ),
               ListTile(
-                title: Text("7 days"),
+                title: Text("2 Hours"),
                 onTap: () {
-                  Navigator.of(context).pop();
+                    _onOptionSelected('optionRecipes 2 Hours');
                 },
               ),
             ],
@@ -328,15 +358,15 @@ class _MyAccountState extends State<MyAccount> {
             mainAxisSize: MainAxisSize.min,
             children: [
               ListTile(
-                title: Text("3 days"),
+                title: Text("1 Hour"),
                 onTap: () {
-                  Navigator.of(context).pop();
+                  _onOptionSelected('optionAnalysis 1 Hour');
                 },
               ),
               ListTile(
-                title: Text("7 days"),
+                title: Text("2 Hours"),
                 onTap: () {
-                  Navigator.of(context).pop();
+                  _onOptionSelected('optionAnalysis 2 Hours');
                 },
               ),
             ],
@@ -353,7 +383,6 @@ class _MyAccountState extends State<MyAccount> {
       },
     );
   }
-
   Future<bool> _showSignOutConfirmationDialog(BuildContext context) async {
     return await showDialog<bool>(
           context: context,

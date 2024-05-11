@@ -12,6 +12,8 @@ class SharedPrefService {
     print('write dulu');
     final SharedPreferences pref = await SharedPreferences.getInstance();
     bool isSaved = await pref.setString(key, value);
+    print('key: $key');
+    print('value: $value');
     debugPrint("PREF IS SAVED ${isSaved.toString()}");
   }
 

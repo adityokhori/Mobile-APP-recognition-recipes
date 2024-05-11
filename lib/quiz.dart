@@ -1,46 +1,29 @@
 import 'package:flutter/material.dart';
 import 'package:grinv/start_quiz.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
-class QuizPage extends StatefulWidget {
+class QuizPage extends StatelessWidget {
   const QuizPage({Key? key}) : super(key: key);
 
   @override
-  State<QuizPage> createState() => _QuizPageState();
-}
+  Widget build(BuildContext context) {
+    FirebaseFirestore firestore = FirebaseFirestore.instance;
 
-class _QuizPageState extends State<QuizPage> {
-  Future<bool> _isQuizAccessible() async {
     DateTime now = DateTime.now();
 
-    DateTime sessionNoonStart = DateTime(now.year, now.month, now.day, 12, 0, 0);
-    DateTime sessionNoonEnd = DateTime(now.year, now.month, now.day, 15, 0, 0);
-    DateTime sessionEveningStart = DateTime(now.year, now.month, now.day, 18, 0, 0);
-    DateTime sessionEveningEnd = DateTime(now.year, now.month, now.day, 21, 0, 0);
-    bool isAccessible = (now.isAfter(sessionNoonStart) && now.isBefore(sessionNoonEnd)) ||
-        (now.isAfter(sessionEveningStart) && now.isBefore(sessionEveningEnd));
+    FirebaseAuth auth = FirebaseAuth.instance;
+    User? user = auth.currentUser;
 
-    if (isAccessible) {
-      SharedPreferences prefs = await SharedPreferences.getInstance();
-      bool hasAccessedToday = prefs.getBool('hasAccessedToday') ?? false;
-      if (hasAccessedToday) {
-        return false;
-      } else {
-        return true; 
+    void updateLastQuizTime() {
+      if (user != null) {
+        firestore
+            .collection('users')
+            .doc(user.uid)
+            .update({'lastQuizTime': now});
       }
-    } else {
-      return false;
     }
-  }
 
-  _markQuizAccessed() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    prefs.setBool('hasAccessedToday', true);
-  }
-
-  @override
-  Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Color.fromARGB(255, 155, 92, 167),
       body: Center(
@@ -62,32 +45,76 @@ class _QuizPageState extends State<QuizPage> {
               ),
             ),
             SizedBox(height: 20),
-            FutureBuilder<bool>(
-              future: _isQuizAccessible(),
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return CircularProgressIndicator();
-                }
-                bool isAccessible = snapshot.data ?? false;
-                return ElevatedButton(
-                  onPressed: isAccessible
-                      ? () {
-                          _markQuizAccessed();
+            ElevatedButton(
+              onPressed: () {
+                if (user != null) {
+                  firestore.collection('users').doc(user.uid).get().then((doc) {
+                    if (doc.exists) {
+                      Timestamp? lastQuizTimestamp =
+                          doc.data()?['lastQuizTime'];
+                      if (lastQuizTimestamp != null) {
+                        DateTime lastQuizTime = lastQuizTimestamp.toDate();
+                        DateTime nextAccessibleTime =
+                            lastQuizTime.add(Duration(hours: 1));
+                        if (now.isAfter(nextAccessibleTime)) {
+                          updateLastQuizTime();
                           Navigator.push(
                             context,
                             MaterialPageRoute(
                               builder: (context) => StartQuiz(),
                             ),
                           );
+                        } else {
+                          print(
+                              'Anda hanya dapat mengakses "Start Quiz" setiap 1 jam sekali.');
                         }
-                      : null, 
-                  child: Text(
-                    'Start Quiz',
-                    style: TextStyle(fontSize: 20),
-                  ),
-                );
+                      } else {
+                        updateLastQuizTime();
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => StartQuiz(),
+                          ),
+                        );
+                      }
+                    }
+                  });
+                }
               },
+              child: Text(
+                'Start Quiz',
+                style: TextStyle(fontSize: 20),
+              ),
             ),
+            SizedBox(height: 10), // Spacer
+            if (user != null) ...[
+              StreamBuilder<DocumentSnapshot>(
+                stream: firestore.collection('users').doc(user.uid).snapshots(),
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return CircularProgressIndicator();
+                  }
+                  Timestamp? lastQuizTimestamp = snapshot.data?['lastQuizTime'];
+                  if (lastQuizTimestamp != null) {
+                    DateTime lastQuizTime = lastQuizTimestamp.toDate();
+                    DateTime nextAccessibleTime =
+                        lastQuizTime.add(Duration(hours: 1));
+                    if (now.isBefore(nextAccessibleTime)) {
+                      Duration remainingTime =
+                          nextAccessibleTime.difference(now);
+                      int hours = remainingTime.inHours;
+                      int minutes = remainingTime.inMinutes.remainder(60);
+                      // int seconds = remainingTime.inSeconds.remainder(60);
+                      return Text(
+                        'Next access in: ${hours.toString()} hours ${minutes.toString()} minutes',
+                        style: TextStyle(fontSize: 16, color: Colors.white),
+                      );
+                    }
+                  }
+                  return Container(); // Return an empty container if conditions are not met
+                },
+              ),
+            ],
           ],
         ),
       ),
@@ -202,8 +229,7 @@ class _PlayQuizState extends State<PlayQuiz> {
               TextFormField(
                 controller: _pointController,
                 keyboardType: TextInputType.number,
-                decoration: InputDecoration(
-                    labelText: 'Point'), 
+                decoration: InputDecoration(labelText: 'Point'),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return 'Please enter the point';

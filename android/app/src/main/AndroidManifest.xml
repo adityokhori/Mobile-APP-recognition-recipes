@@ -2,7 +2,7 @@
     package="com.example.authentication">
 
     <application
-        android:label="grinv"
+        android:label="Grinv"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
 
