@@ -15,11 +15,13 @@ class MyAccount extends StatefulWidget {
 }
 
 class _MyAccountState extends State<MyAccount> {
-  
   late String _displayName = '';
   late String _email = '';
   late String _point = '';
   late String _photoURL = '';
+  int optionAnalysisHours = 0;
+  int optionRecipesHours = 0;
+
 
   SharedPrefService sharedPrefService = SharedPrefService();
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
@@ -32,30 +34,62 @@ class _MyAccountState extends State<MyAccount> {
     super.initState();
     _getUserInfo();
   }
-Future<void> _updateFirebaseAttribute(String option, bool value) async {
-    try {
-      User? user = FirebaseAuth.instance.currentUser;
-      if (user != null) {
-        await _firestore.collection('users').doc(user.uid).update({
-          option: value,
-        });
-        print('Berhasil memperbarui nilai $option di Firestore.');
-      }
-    } catch (e) {
-      print('Gagal memperbarui nilai $option di Firestore: $e');
-    }
-  }
 
-   void _onOptionSelected(String option) async {
-    // Update nilai opsi yang dipilih di Firestore
-    if (option == 'optionAnalysis 1 Hour') {
-      await _updateFirebaseAttribute('optionAnalysis 1 Hour', true);
-    } else if (option == 'optionAnalysis 2 Hours') {
-      await _updateFirebaseAttribute('optionAnalysis 2 Hours', true);
-    } else if (option == 'optionRecipes 1 Hour') {
-      await _updateFirebaseAttribute('optionRecipes 1 Hour', true);
-    } else if (option == 'optionRecipes 2 Hours') {
-      await _updateFirebaseAttribute('optionRecipes 2 Hours', true);
+Future<void> _updateFirebaseAttribute(String option, bool value) async {
+  try {
+    User? user = FirebaseAuth.instance.currentUser;
+    if (user != null) {
+      int incrementHours = 0;
+      String optionKey = ''; // Untuk menyimpan kunci opsi yang akan diupdate
+      String firstActiveKey = ''; // Untuk menyimpan kunci timestamp pertama kali aktif
+      if (option.startsWith('optionAnalysis')) {
+        String hoursString = option.split(' ')[1];
+        incrementHours = int.parse(hoursString);
+        optionKey = 'optionAnalysis'; // Menggunakan kunci yang sama untuk semua opsi analisis
+        firstActiveKey = 'optionAnalysisFirstActive';
+        optionAnalysisHours += incrementHours;
+      } else if(option.startsWith('optionRecipes')){
+        String hoursString = option.split(' ')[1];
+        incrementHours = int.parse(hoursString);
+        optionKey = 'optionRecipes'; // Menggunakan kunci yang sama untuk semua opsi resep
+        firstActiveKey = 'optionRecipesFirstActive';
+        optionRecipesHours += incrementHours;
+      }
+
+      Map<String, dynamic> updateData = {
+        optionKey: value,
+      };
+
+      if (!(await _checkAttributeExists(user.uid, firstActiveKey))) {
+        updateData[firstActiveKey] = DateTime.now().millisecondsSinceEpoch;
+      }
+
+      if (optionKey == 'optionAnalysis') {
+        updateData['optionAnalysisHours'] = optionAnalysisHours;
+      } else if (optionKey == 'optionRecipes') {
+        updateData['optionRecipesHours'] = optionRecipesHours;
+      }
+
+      await _firestore.collection('users').doc(user.uid).update(updateData);
+      print('Berhasil memperbarui nilai $option di Firestore.');
+    }
+  } catch (e) {
+    print('Gagal memperbarui nilai $option di Firestore: $e');
+  }
+}
+
+Future<bool> _checkAttributeExists(String userId, String attributeName) async {
+  final userData = await _firestore.collection('users').doc(userId).get();
+  return userData.exists && userData.data()!.containsKey(attributeName);
+}
+
+  void _onOptionSelected(String option) async {
+    if (option == 'optionAnalysis 1 Hour' ||
+        option == 'optionAnalysis 2 Hours') {
+      await _updateFirebaseAttribute(option, true);
+    } else if (option == 'optionRecipes 1 Hour' ||
+        option == 'optionRecipes 2 Hours') {
+      await _updateFirebaseAttribute(option, true);
     }
   }
 
@@ -189,7 +223,7 @@ Future<void> _updateFirebaseAttribute(String option, bool value) async {
     );
   }
 
-@override
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Center(
@@ -200,7 +234,7 @@ Future<void> _updateFirebaseAttribute(String option, bool value) async {
               onTap: () async {
                 File? image = await _pickAndUploadImage();
                 if (image != null) {
-                  // Tambahkan logika untuk menampilkan foto baru
+                  _photoURL = image.path;
                 }
               },
               child: CircleAvatar(
@@ -278,7 +312,7 @@ Future<void> _updateFirebaseAttribute(String option, bool value) async {
     );
   }
 
-   void _showPointChangeDialog(BuildContext context) {
+  void _showPointChangeDialog(BuildContext context) {
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -313,7 +347,8 @@ Future<void> _updateFirebaseAttribute(String option, bool value) async {
       },
     );
   }
-    void _selectBookRecipes(BuildContext context) {
+
+  void _selectBookRecipes(BuildContext context) {
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -331,7 +366,7 @@ Future<void> _updateFirebaseAttribute(String option, bool value) async {
               ListTile(
                 title: Text("2 Hours"),
                 onTap: () {
-                    _onOptionSelected('optionRecipes 2 Hours');
+                  _onOptionSelected('optionRecipes 2 Hours');
                 },
               ),
             ],
@@ -348,6 +383,7 @@ Future<void> _updateFirebaseAttribute(String option, bool value) async {
       },
     );
   }
+
   void _selectNutritionAnalysis(BuildContext context) {
     showDialog(
       context: context,
@@ -383,6 +419,7 @@ Future<void> _updateFirebaseAttribute(String option, bool value) async {
       },
     );
   }
+
   Future<bool> _showSignOutConfirmationDialog(BuildContext context) async {
     return await showDialog<bool>(
           context: context,

@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'recognition.dart';
 import 'account_info.dart';
 import 'history.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'EdamamRecipes.dart';
 import 'nutrition_analysis.dart';
 import 'quiz.dart';
+import 'package:grinv/news.dart';
 
 class OpenButtom extends StatelessWidget {
   @override
@@ -24,8 +26,17 @@ class BottomNavigation extends StatefulWidget {
 
 class _BottomNavigationState extends State<BottomNavigation> {
   User? user = FirebaseAuth.instance.currentUser;
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
   int _selectedIndex = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    if (user != null) {
+      _checkAndResetDurations(user!.uid);
+    }
+  }
 
   void _onItemTapped(int index) {
     setState(() {
@@ -33,15 +44,90 @@ class _BottomNavigationState extends State<BottomNavigation> {
     });
   }
 
+  Future<void> _checkAndResetDurations(String userId) async {
+    final userData = await _firestore.collection('users').doc(userId).get();
+    if (userData.exists) {
+      final data = userData.data();
+      await _checkAndResetDuration(userId, 'optionAnalysis',
+          'optionAnalysisFirstActive', 'optionAnalysisHours', data);
+      await _checkAndResetDuration(userId, 'optionRecipes',
+          'optionRecipesFirstActive', 'optionRecipesHours', data);
+    }
+  }
+
+  Future<void> _checkAndResetDuration(
+      String userId,
+      String optionKey,
+      String firstActiveKey,
+      String hoursKey,
+      Map<String, dynamic>? data) async {
+    if (data != null &&
+        data.containsKey(firstActiveKey) &&
+        data.containsKey(hoursKey)) {
+      final firstActiveTimestamp = data[firstActiveKey];
+      final hours = data[hoursKey];
+      if (firstActiveTimestamp != null && hours != null) {
+        final currentTimestamp = DateTime.now().millisecondsSinceEpoch;
+        final durationInMillis = hours * 3600000;
+
+        if (currentTimestamp - firstActiveTimestamp >= durationInMillis) {
+          // Reset semua atribut terkait jika durasi telah habis
+          await _firestore.collection('users').doc(userId).update({
+            optionKey: false,
+            firstActiveKey: null,
+            hoursKey: 0,
+          });
+          print('Durasi untuk $optionKey telah habis, reset atribut.');
+        }
+      }
+    }
+  }
+
+  Future<bool> _getOptionAnalysisStatus(String userId) async {
+    final userData = await _firestore.collection('users').doc(userId).get();
+    if (userData.exists) {
+      final data = userData.data();
+      if (data != null && data.containsKey('optionAnalysis')) {
+        return data['optionAnalysis'];
+      }
+    }
+    return false;
+  }
+
+  Future<bool> _getOptionRecipesStatus(String userId) async {
+    final userData = await _firestore.collection('users').doc(userId).get();
+    if (userData.exists) {
+      final data = userData.data();
+      if (data != null && data.containsKey('optionRecipes')) {
+        return data['optionRecipes'];
+      }
+    }
+    return false;
+  }
+
+  Future<void> _setOptionAnalysisFirstActive(String userId) async {
+    await _firestore.collection('users').doc(userId).update({
+      'optionAnalysisFirstActive': DateTime.now().millisecondsSinceEpoch,
+    });
+  }
+
+  Future<void> _setOptionRecipesFirstActive(String userId) async {
+    await _firestore.collection('users').doc(userId).update({
+      'optionRecipesFirstActive': DateTime.now().millisecondsSinceEpoch,
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     Widget body = _selectedIndex == 0
+    ? NewsApi()
+      : _selectedIndex == 1
         ? QuizPage()
-          : _selectedIndex == 1
+        : _selectedIndex == 2
             ? HistoryPage()
-              : _selectedIndex == 2
+            : _selectedIndex == 3
                 ? Recognition()
-                  : MyAccount();
+                : MyAccount();
 
     return Scaffold(
       appBar: AppBar(
@@ -62,38 +148,72 @@ class _BottomNavigationState extends State<BottomNavigation> {
           IconButton(onPressed: () {}, icon: Icon(Icons.notifications)),
         ],
       ),
-      body: Stack( 
+      body: Stack(
         children: [
           body,
-          Positioned( 
-            bottom: 80, 
-            right: 16,
-            child: FloatingActionButton(
-              heroTag: 'buttonAnalysis',
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => NutritionAnalysisPage()),
+          FutureBuilder<bool>(
+            future: _getOptionAnalysisStatus(user!.uid),
+            builder: (context, snapshot) {
+              // if (snapshot.connectionState == ConnectionState.waiting) {
+              //   return CircularProgressIndicator();
+              // }
+              if (snapshot.hasData && snapshot.data == true) {
+                return Positioned(
+                  bottom: 80,
+                  right: 16,
+                  child: FloatingActionButton(
+                    heroTag: 'buttonAnalysis',
+                    onPressed: () async {
+                      await _setOptionAnalysisFirstActive(user!.uid);
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => NutritionAnalysisPage()),
+                      );
+                    },
+                    child: Icon(
+                      Icons.analytics,
+                      color: Colors.white,
+                    ),
+                    backgroundColor: Colors.green,
+                  ),
                 );
-              },
-              child: Icon(Icons.analytics, color: Colors.white,),
-              backgroundColor: Colors.green, 
-            ),
+              } else {
+                return SizedBox.shrink();
+              }
+            },
           ),
-          Positioned( 
-            bottom: 16, 
-            right: 16, 
-            child: FloatingActionButton(
-              heroTag: 'buttonRecipes',
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => EdamamRecipes()),
+          FutureBuilder<bool>(
+            future: _getOptionRecipesStatus(user!.uid),
+            builder: (context, snapshot) {
+              // if (snapshot.connectionState == ConnectionState.waiting) {
+              //   return CircularProgressIndicator();
+              // }
+              if (snapshot.hasData && snapshot.data == true) {
+                return Positioned(
+                  bottom: 15,
+                  right: 16, // Adjust the position of buttonRecipes here
+                  child: FloatingActionButton(
+                    heroTag: 'buttonRecipes',
+                    onPressed: () async {
+                      await _setOptionRecipesFirstActive(user!.uid);
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => EdamamRecipes()),
+                      );
+                    },
+                    child: Icon(
+                      Icons.receipt,
+                      color: Colors.white,
+                    ),
+                    backgroundColor: Colors.yellow,
+                  ),
                 );
-              },
-              child: Icon(Icons.receipt, color: Colors.white,),
-              backgroundColor: Colors.green,
-            ),
+              } else {
+                return SizedBox.shrink();
+              }
+            },
           ),
         ],
       ),
@@ -121,6 +241,10 @@ class _MyBottomNavigationBarState extends State<MyBottomNavigationBar> {
   Widget build(BuildContext context) {
     return BottomNavigationBar(
       items: const <BottomNavigationBarItem>[
+        BottomNavigationBarItem(
+          icon: Icon(Icons.newspaper),
+          label: 'News',
+        ),
         BottomNavigationBarItem(
           icon: Icon(Icons.quiz),
           label: 'Quiz',
