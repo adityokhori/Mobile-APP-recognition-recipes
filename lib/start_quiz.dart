@@ -32,7 +32,7 @@ class StartQuiz extends StatelessWidget {
 
           var randomQuestionData =
               snapshot.data!.docs[Random().nextInt(snapshot.data!.docs.length)];
-
+              
           return QuizQuestionCard(
             difficult: randomQuestionData['difficulty'],
             question: randomQuestionData['question'],

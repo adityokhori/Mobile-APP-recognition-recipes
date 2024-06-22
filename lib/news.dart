@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
-import 'newsmodel.dart'; 
+import 'newsmodel.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class NewsApi extends StatefulWidget {
   const NewsApi({super.key});
@@ -34,7 +35,7 @@ class _NewsApiState extends State<NewsApi> {
   Future<void> _fetchNews() async {
     final url =
         'https://newsapi.org/v2/everything?&q=healthy%20foods&page=$_currentPage&pageSize=$_pageSize&apiKey=24de81ed1a404519bb9504917f9f295f';
-        
+
     try {
       final response = await http.get(Uri.parse(url));
       if (response.statusCode == 200) {
@@ -56,6 +57,7 @@ class _NewsApiState extends State<NewsApi> {
             }
             _articles.add(NewsArticle.fromJson(json));
           }
+
           _isLoading = false;
           _isLoadingMore = false;
         });
@@ -72,12 +74,22 @@ class _NewsApiState extends State<NewsApi> {
   }
 
   void _onScroll() {
-    if (_scrollController.position.extentAfter < 500 && !_isLoadingMore && !_isLoading) {
+    if (_scrollController.position.extentAfter < 500 &&
+        !_isLoadingMore &&
+        !_isLoading) {
       setState(() {
         _isLoadingMore = true;
         _currentPage++;
       });
       _fetchNews();
+    }
+  }
+
+  Future<void> _launchURL(String url) async {
+    if (await canLaunch(url)) {
+      await launch(url);
+    } else {
+      throw 'Could not launch $url';
     }
   }
 
@@ -97,58 +109,62 @@ class _NewsApiState extends State<NewsApi> {
                     itemCount: _articles.length,
                     itemBuilder: (context, index) {
                       final article = _articles[index];
-                      return Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Stack(
-                          children: [
-                            // Image
-                            article.urlToImage.isNotEmpty
-                                ? Image.network(
-                                    article.urlToImage,
-                                    width: MediaQuery.of(context).size.width,
-                                    fit: BoxFit.cover,
-                                  )
-                                : Container(
-                                    width: MediaQuery.of(context).size.width,
-                                    height: 200,
-                                    color: Colors.grey,
-                                    child: Center(child: Text('No Image')),
+                      return InkWell(
+                        onTap: () => _launchURL(article.url),
+                        child: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Stack(
+                            children: [
+                              // Image
+                              article.urlToImage.isNotEmpty
+                                  ? Image.network(
+                                      article.urlToImage,
+                                      width: MediaQuery.of(context).size.width,
+                                      fit: BoxFit.cover,
+                                    )
+                                  : Container(
+                                      width: MediaQuery.of(context).size.width,
+                                      height: 200,
+                                      color: Colors.grey,
+                                      child: Center(child: Text('No Image')),
+                                    ),
+                              // Title and Subtitle
+                              Positioned(
+                                bottom: 0,
+                                left: 0,
+                                right: 0,
+                                child: Container(
+                                  color: Colors.black.withOpacity(0.6),
+                                  padding: EdgeInsets.all(2.0),
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        article.title,
+                                        maxLines: 1,
+                                        overflow: TextOverflow.ellipsis,
+                                        style: TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                      Text(
+                                        article.description,
+                                        maxLines: 2,
+                                        overflow: TextOverflow.ellipsis,
+                                        style: TextStyle(
+                                          color: Colors.white70,
+                                          fontSize: 12,
+                                        ),
+                                      ),
+                                    ],
                                   ),
-                            // Title and Subtitle
-                            Positioned(
-                              bottom: 0,
-                              left: 0,
-                              right: 0,
-                              child: Container(
-                                color: Colors.black.withOpacity(0.6),
-                                padding: EdgeInsets.all(2.0),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      article.title,
-                                      maxLines: 1,
-                                      overflow: TextOverflow.ellipsis,
-                                      style: TextStyle(
-                                        color: Colors.white,
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
-                                    Text(
-                                      article.description,
-                                      maxLines: 2,
-                                      overflow: TextOverflow.ellipsis,
-                                      style: TextStyle(
-                                        color: Colors.white70,
-                                        fontSize: 12,
-                                      ),
-                                    ),
-                                  ],
                                 ),
                               ),
-                            ),
-                          ],
+                            ],
+                          ),
                         ),
                       );
                     },

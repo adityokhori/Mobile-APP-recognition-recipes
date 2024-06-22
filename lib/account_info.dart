@@ -19,9 +19,8 @@ class _MyAccountState extends State<MyAccount> {
   late String _email = '';
   late String _point = '';
   late String _photoURL = '';
-  int optionAnalysisHours = 0;
-  int optionRecipesHours = 0;
-
+  int optionAnalysisDays = 0;
+  int optionRecipesDays = 0;
 
   SharedPrefService sharedPrefService = SharedPrefService();
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
@@ -35,60 +34,80 @@ class _MyAccountState extends State<MyAccount> {
     _getUserInfo();
   }
 
-Future<void> _updateFirebaseAttribute(String option, bool value) async {
-  try {
-    User? user = FirebaseAuth.instance.currentUser;
-    if (user != null) {
-      int incrementHours = 0;
-      String optionKey = ''; // Untuk menyimpan kunci opsi yang akan diupdate
-      String firstActiveKey = ''; // Untuk menyimpan kunci timestamp pertama kali aktif
-      if (option.startsWith('optionAnalysis')) {
-        String hoursString = option.split(' ')[1];
-        incrementHours = int.parse(hoursString);
-        optionKey = 'optionAnalysis'; // Menggunakan kunci yang sama untuk semua opsi analisis
-        firstActiveKey = 'optionAnalysisFirstActive';
-        optionAnalysisHours += incrementHours;
-      } else if(option.startsWith('optionRecipes')){
-        String hoursString = option.split(' ')[1];
-        incrementHours = int.parse(hoursString);
-        optionKey = 'optionRecipes'; // Menggunakan kunci yang sama untuk semua opsi resep
-        firstActiveKey = 'optionRecipesFirstActive';
-        optionRecipesHours += incrementHours;
+  Future<void> _updateFirebaseAttribute(String option, bool value) async {
+    try {
+      User? user = FirebaseAuth.instance.currentUser;
+      if (user != null) {
+        int incrementDays = 0;
+        String optionKey = ''; // Untuk menyimpan kunci opsi yang akan diupdate
+        String firstActiveKey = ''; // Untuk menyimpan kunci timestamp pertama kali aktif
+        int pointDeduction = 0;
+
+        if (option.startsWith('optionAnalysis')) {
+          String daysString = option.split(' ')[1];
+          incrementDays = int.parse(daysString);
+          optionKey = 'optionAnalysis'; // Menggunakan kunci yang sama untuk semua opsi analisis
+          firstActiveKey = 'optionAnalysisFirstActive';
+          optionAnalysisDays += incrementDays;
+          pointDeduction = incrementDays == 3 ? 50 : 100;
+        } else if (option.startsWith('optionRecipes')) {
+          String daysString = option.split(' ')[1];
+          incrementDays = int.parse(daysString);
+          optionKey = 'optionRecipes'; // Menggunakan kunci yang sama untuk semua opsi resep
+          firstActiveKey = 'optionRecipesFirstActive';
+          optionRecipesDays += incrementDays;
+          pointDeduction = incrementDays == 3 ? 50 : 100;
+        }
+
+        DocumentSnapshot userDoc = await _firestore.collection('users').doc(user.uid).get();
+        int currentPoints = (userDoc.data() as Map<String, dynamic>)['point_quiz'] ?? 0;
+
+        if (currentPoints >= pointDeduction) {
+          Map<String, dynamic> updateData = {
+            optionKey: value,
+            'point_quiz': currentPoints - pointDeduction,
+          };
+
+          if (!(await _checkAttributeExists(user.uid, firstActiveKey))) {
+            updateData[firstActiveKey] = DateTime.now().millisecondsSinceEpoch;
+          }
+
+          if (optionKey == 'optionAnalysis') {
+            updateData['optionAnalysisDays'] = optionAnalysisDays;
+          } else if (optionKey == 'optionRecipes') {
+            updateData['optionRecipesDays'] = optionRecipesDays;
+          }
+
+          await _firestore.collection('users').doc(user.uid).update(updateData);
+          setState(() {
+            _point = (currentPoints - pointDeduction).toString();
+          });
+
+          print('Berhasil memperbarui nilai $option di Firestore.');
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('Tidak cukup poin untuk memilih opsi ini.'),
+            ),
+          );
+        }
       }
-
-      Map<String, dynamic> updateData = {
-        optionKey: value,
-      };
-
-      if (!(await _checkAttributeExists(user.uid, firstActiveKey))) {
-        updateData[firstActiveKey] = DateTime.now().millisecondsSinceEpoch;
-      }
-
-      if (optionKey == 'optionAnalysis') {
-        updateData['optionAnalysisHours'] = optionAnalysisHours;
-      } else if (optionKey == 'optionRecipes') {
-        updateData['optionRecipesHours'] = optionRecipesHours;
-      }
-
-      await _firestore.collection('users').doc(user.uid).update(updateData);
-      print('Berhasil memperbarui nilai $option di Firestore.');
+    } catch (e) {
+      print('Gagal memperbarui nilai $option di Firestore: $e');
     }
-  } catch (e) {
-    print('Gagal memperbarui nilai $option di Firestore: $e');
   }
-}
 
-Future<bool> _checkAttributeExists(String userId, String attributeName) async {
-  final userData = await _firestore.collection('users').doc(userId).get();
-  return userData.exists && userData.data()!.containsKey(attributeName);
-}
+  Future<bool> _checkAttributeExists(String userId, String attributeName) async {
+    final userData = await _firestore.collection('users').doc(userId).get();
+    return userData.exists && userData.data()!.containsKey(attributeName);
+  }
 
   void _onOptionSelected(String option) async {
-    if (option == 'optionAnalysis 1 Hour' ||
-        option == 'optionAnalysis 2 Hours') {
+    if (option == 'optionAnalysis 3 Days' ||
+        option == 'optionAnalysis 7 Days') {
       await _updateFirebaseAttribute(option, true);
-    } else if (option == 'optionRecipes 1 Hour' ||
-        option == 'optionRecipes 2 Hours') {
+    } else if (option == 'optionRecipes 3 Days' ||
+        option == 'optionRecipes 7 Days') {
       await _updateFirebaseAttribute(option, true);
     }
   }
@@ -256,12 +275,12 @@ Future<bool> _checkAttributeExists(String userId, String attributeName) async {
               _email,
               style: TextStyle(fontSize: 18),
             ),
-            SizedBox(
-              height: 20,
-            ),
+            SizedBox(height: 10),
             Text(
-              'My point: $_point',
-              style: TextStyle(fontSize: 18),
+              'Your Point: $_point',
+              style: TextStyle(
+                fontSize: 18,
+              ),
             ),
             SizedBox(
               height: 10,
@@ -358,15 +377,17 @@ Future<bool> _checkAttributeExists(String userId, String attributeName) async {
             mainAxisSize: MainAxisSize.min,
             children: [
               ListTile(
-                title: Text("1 Hour"),
+                title: Text("3 Days"),
                 onTap: () {
-                  _onOptionSelected('optionRecipes 1 Hour');
+                  _onOptionSelected('optionRecipes 3 Days');
+                  Navigator.of(context).pop();
                 },
               ),
               ListTile(
-                title: Text("2 Hours"),
+                title: Text("7 Days"),
                 onTap: () {
-                  _onOptionSelected('optionRecipes 2 Hours');
+                  _onOptionSelected('optionRecipes 7 Days');
+                  Navigator.of(context).pop();
                 },
               ),
             ],
@@ -394,15 +415,17 @@ Future<bool> _checkAttributeExists(String userId, String attributeName) async {
             mainAxisSize: MainAxisSize.min,
             children: [
               ListTile(
-                title: Text("1 Hour"),
+                title: Text("3 Days"),
                 onTap: () {
-                  _onOptionSelected('optionAnalysis 1 Hour');
+                  _onOptionSelected('optionAnalysis 3 Days');
+                  Navigator.of(context).pop();
                 },
               ),
               ListTile(
-                title: Text("2 Hours"),
+                title: Text("7 Days"),
                 onTap: () {
-                  _onOptionSelected('optionAnalysis 2 Hours');
+                  _onOptionSelected('optionAnalysis 7 Days');
+                  Navigator.of(context).pop();
                 },
               ),
             ],
