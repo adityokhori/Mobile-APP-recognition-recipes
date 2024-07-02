@@ -33,7 +33,7 @@ class _SignUpPageState extends State<SignUpPage> {
         child: Center(
           child: SingleChildScrollView(
             child: Padding(
-              padding: EdgeInsets.all(45),
+              padding: const EdgeInsets.all(45),
               child: Column(
                 children: <Widget>[
                   SizedBox(
@@ -45,17 +45,17 @@ class _SignUpPageState extends State<SignUpPage> {
                     ),
                   ),
                   
-                  SizedBox(
+                  const SizedBox(
                     height: 20,
                   ),
                   reusTextField('Display Name', Icons.person, false,
                       _displayNameController),
-                  SizedBox(
+                  const SizedBox(
                     height: 20,
                   ),
                   reusTextField(
                       'Email', Icons.email, false, _emailTextController),
-                  SizedBox(
+                  const SizedBox(
                     height: 20,
                   ),
                   Stack(alignment: Alignment.centerRight, children: [
@@ -75,7 +75,7 @@ class _SignUpPageState extends State<SignUpPage> {
                       },
                     ),
                   ]),
-                  SizedBox(
+                  const SizedBox(
                     height: 20,
                   ),
                   Stack(alignment: Alignment.centerRight, children: [
@@ -94,7 +94,7 @@ class _SignUpPageState extends State<SignUpPage> {
                       },
                     ),
                   ]),
-                  SizedBox(
+                  const SizedBox(
                     height: 20,
                   ),
                   tombol(context, false, () {
@@ -129,11 +129,11 @@ class _SignUpPageState extends State<SignUpPage> {
                                   Text("Sign Up Success")
                                 ],
                               ),
-                              content: Text(
+                              content: const Text(
                                   "You have successfully created an account. Please verify your email."),
                               actions: [
                                 ElevatedButton(
-                                  child: Text("OK"),
+                                  child: const Text("OK"),
                                   onPressed: () {
                                     Navigator.of(context).pop();
                                     Navigator.push(
@@ -157,11 +157,11 @@ class _SignUpPageState extends State<SignUpPage> {
                         context: context,
                         builder: (BuildContext context) {
                           return AlertDialog(
-                            title: Text("Error"),
-                            content: Text("Passwords do not match."),
+                            title: const Text("Error"),
+                            content: const Text("Passwords do not match."),
                             actions: [
                               ElevatedButton(
-                                child: Text("OK"),
+                                child: const Text("OK"),
                                 onPressed: () {
                                   Navigator.of(context).pop();
                                 },
@@ -198,13 +198,13 @@ class _SignUpPageState extends State<SignUpPage> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        Text('Already have an account?', style: TextStyle(color: Colors.black)),
+        const Text('Already have an account?', style: TextStyle(color: Colors.black)),
         GestureDetector(
           onTap: () {
             Navigator.push(
-                context, MaterialPageRoute(builder: (context) => SignInPage()));
+                context, MaterialPageRoute(builder: (context) => const SignInPage()));
           },
-          child: Text(
+          child: const Text(
             ' Sign In',
             style: TextStyle(
                 color: Color.fromARGB(255, 19, 121, 255),

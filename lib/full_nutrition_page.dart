@@ -7,7 +7,7 @@ class FoodDetailPage extends StatelessWidget {
 
   Widget _buildNutrientRow(String label, Map<String, dynamic>? nutrient) {
     if (nutrient == null) {
-      return SizedBox
+      return const SizedBox
           .shrink(); // Jika nilai nutrisi null, kembalikan widget kosong
     }
 
@@ -19,7 +19,7 @@ class FoodDetailPage extends StatelessWidget {
       children: [
         Text(
           label,
-          style: TextStyle(fontWeight: FontWeight.bold),
+          style: const TextStyle(fontWeight: FontWeight.bold),
         ),
         Text('$quantity $unit'),
       ],
@@ -30,10 +30,10 @@ class FoodDetailPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Food Detail'),
+        title: const Text('Food Detail'),
       ),
       body: SingleChildScrollView(
-        padding: EdgeInsets.all(16.0),
+        padding: const EdgeInsets.all(16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
@@ -41,10 +41,10 @@ class FoodDetailPage extends StatelessWidget {
                 color: Colors.black,
                 child: Text(
                   '${foodDetails['ingredients'][0]['parsed'][0]['foodMatch']}',
-                  style: TextStyle(fontSize: 20),
+                  style: const TextStyle(fontSize: 20),
                   textAlign: TextAlign.center,
                 )),
-            SizedBox(
+            const SizedBox(
               height: 8,
             ),
             Text(
@@ -65,15 +65,15 @@ class FoodDetailPage extends StatelessWidget {
             Text(
               'Cautions: ${(foodDetails['cautions'] as List).join(', ')}',
             ),
-            Divider(),
-            Text(
+            const Divider(),
+            const Text(
               'Nutrients:',
               style: TextStyle(
                 fontWeight: FontWeight.bold,
                 fontSize: 16.0,
               ),
             ),
-            SizedBox(height: 8.0),
+            const SizedBox(height: 8.0),
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [

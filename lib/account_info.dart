@@ -40,27 +40,32 @@ class _MyAccountState extends State<MyAccount> {
       if (user != null) {
         int incrementDays = 0;
         String optionKey = ''; // Untuk menyimpan kunci opsi yang akan diupdate
-        String firstActiveKey = ''; // Untuk menyimpan kunci timestamp pertama kali aktif
+        String firstActiveKey =
+            ''; // Untuk menyimpan kunci timestamp pertama kali aktif
         int pointDeduction = 0;
 
         if (option.startsWith('optionAnalysis')) {
           String daysString = option.split(' ')[1];
           incrementDays = int.parse(daysString);
-          optionKey = 'optionAnalysis'; // Menggunakan kunci yang sama untuk semua opsi analisis
+          optionKey =
+              'optionAnalysis'; // Menggunakan kunci yang sama untuk semua opsi analisis
           firstActiveKey = 'optionAnalysisFirstActive';
           optionAnalysisDays += incrementDays;
           pointDeduction = incrementDays == 3 ? 50 : 100;
         } else if (option.startsWith('optionRecipes')) {
           String daysString = option.split(' ')[1];
           incrementDays = int.parse(daysString);
-          optionKey = 'optionRecipes'; // Menggunakan kunci yang sama untuk semua opsi resep
+          optionKey =
+              'optionRecipes'; // Menggunakan kunci yang sama untuk semua opsi resep
           firstActiveKey = 'optionRecipesFirstActive';
           optionRecipesDays += incrementDays;
           pointDeduction = incrementDays == 3 ? 50 : 100;
         }
 
-        DocumentSnapshot userDoc = await _firestore.collection('users').doc(user.uid).get();
-        int currentPoints = (userDoc.data() as Map<String, dynamic>)['point_quiz'] ?? 0;
+        DocumentSnapshot userDoc =
+            await _firestore.collection('users').doc(user.uid).get();
+        int currentPoints =
+            (userDoc.data() as Map<String, dynamic>)['point_quiz'] ?? 0;
 
         if (currentPoints >= pointDeduction) {
           Map<String, dynamic> updateData = {
@@ -97,7 +102,8 @@ class _MyAccountState extends State<MyAccount> {
     }
   }
 
-  Future<bool> _checkAttributeExists(String userId, String attributeName) async {
+  Future<bool> _checkAttributeExists(
+      String userId, String attributeName) async {
     final userData = await _firestore.collection('users').doc(userId).get();
     return userData.exists && userData.data()!.containsKey(attributeName);
   }
@@ -192,7 +198,7 @@ class _MyAccountState extends State<MyAccount> {
         } catch (e) {
           print('Kesalahan: $e');
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
+            const SnackBar(
               content: Text('Gagal mengunggah atau memperbarui foto profil.'),
             ),
           );
@@ -212,10 +218,10 @@ class _MyAccountState extends State<MyAccount> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text('Change Display Name'),
+          title: const Text('Change Display Name'),
           content: TextFormField(
             controller: _displayNameController,
-            decoration: InputDecoration(
+            decoration: const InputDecoration(
               hintText: 'Enter your new display name',
             ),
           ),
@@ -224,7 +230,7 @@ class _MyAccountState extends State<MyAccount> {
               onPressed: () {
                 Navigator.of(context).pop();
               },
-              child: Text('Cancel'),
+              child: const Text('Cancel'),
             ),
             TextButton(
               onPressed: () async {
@@ -234,7 +240,7 @@ class _MyAccountState extends State<MyAccount> {
                 await _changeProfile();
                 Navigator.of(context).pop();
               },
-              child: Text('Save'),
+              child: const Text('Save'),
             ),
           ],
         );
@@ -265,31 +271,44 @@ class _MyAccountState extends State<MyAccount> {
                 radius: 100,
               ),
             ),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
             Text(
               _displayName,
-              style: TextStyle(fontSize: 24),
+              style: const TextStyle(fontSize: 24),
             ),
-            SizedBox(height: 10),
+            const SizedBox(height: 10),
             Text(
               _email,
-              style: TextStyle(fontSize: 18),
+              style: const TextStyle(fontSize: 18),
             ),
-            SizedBox(height: 10),
-            Text(
-              'Your Point: $_point',
-              style: TextStyle(
-                fontSize: 18,
+            const SizedBox(height: 10),
+            Text.rich(
+              TextSpan(
+                children: [
+                  const TextSpan(
+                    text: 'Your Point: ',
+                    style: TextStyle(
+                      fontSize: 18,
+                    ),
+                  ),
+                  TextSpan(
+                    text: '$_point',
+                    style: const TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ],
               ),
             ),
-            SizedBox(
+            const SizedBox(
               height: 10,
             ),
             ElevatedButton(
               onPressed: () {
                 _showPointChangeDialog(context);
               },
-              child: Text(
+              child: const Text(
                 'Change Your Point',
                 style: TextStyle(color: Colors.black),
               ),
@@ -298,9 +317,9 @@ class _MyAccountState extends State<MyAccount> {
               onPressed: () async {
                 await _showChangeDisplayNameDialog(context);
               },
-              child: Text(
+              child: const Text(
                 'Change Display Name',
-                style: TextStyle(color: Colors.black),
+                style: const TextStyle(color: Colors.black),
               ),
             ),
             ElevatedButton(
@@ -320,7 +339,7 @@ class _MyAccountState extends State<MyAccount> {
                   }
                 }
               },
-              child: Text(
+              child: const Text(
                 'Sign Out',
                 style: TextStyle(color: Colors.red),
               ),
@@ -336,18 +355,18 @@ class _MyAccountState extends State<MyAccount> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text("Change Your Point"),
+          title: const Text("Change Your Point"),
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
               ListTile(
-                title: Text("Nutrition Analysis"),
+                title: const Text("Nutrition Analysis"),
                 onTap: () {
                   _selectNutritionAnalysis(context);
                 },
               ),
               ListTile(
-                title: Text("Book Recipes"),
+                title: const Text("Book Recipes"),
                 onTap: () {
                   _selectBookRecipes(context);
                 },
@@ -359,7 +378,7 @@ class _MyAccountState extends State<MyAccount> {
               onPressed: () {
                 Navigator.of(context).pop();
               },
-              child: Text("Cancel"),
+              child: const Text("Cancel"),
             ),
           ],
         );
@@ -372,19 +391,19 @@ class _MyAccountState extends State<MyAccount> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text("Book recipes"),
+          title: const Text("Book recipes"),
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
               ListTile(
-                title: Text("3 Days"),
+                title: const Text("3 Days (50 point)"),
                 onTap: () {
                   _onOptionSelected('optionRecipes 3 Days');
                   Navigator.of(context).pop();
                 },
               ),
               ListTile(
-                title: Text("7 Days"),
+                title: const Text("7 Days (100 point)"),
                 onTap: () {
                   _onOptionSelected('optionRecipes 7 Days');
                   Navigator.of(context).pop();
@@ -397,7 +416,7 @@ class _MyAccountState extends State<MyAccount> {
               onPressed: () {
                 Navigator.of(context).pop();
               },
-              child: Text("Back"),
+              child: const Text("Back"),
             ),
           ],
         );
@@ -410,19 +429,19 @@ class _MyAccountState extends State<MyAccount> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text("Nutrition Analysis"),
+          title: const Text("Nutrition Analysis"),
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
               ListTile(
-                title: Text("3 Days"),
+                title: const Text("3 Days (50 point)"),
                 onTap: () {
                   _onOptionSelected('optionAnalysis 3 Days');
                   Navigator.of(context).pop();
                 },
               ),
               ListTile(
-                title: Text("7 Days"),
+                title: const Text("7 Days (100 point)"),
                 onTap: () {
                   _onOptionSelected('optionAnalysis 7 Days');
                   Navigator.of(context).pop();
@@ -435,7 +454,7 @@ class _MyAccountState extends State<MyAccount> {
               onPressed: () {
                 Navigator.of(context).pop();
               },
-              child: Text("Back"),
+              child: const Text("Back"),
             ),
           ],
         );
@@ -448,20 +467,20 @@ class _MyAccountState extends State<MyAccount> {
           context: context,
           builder: (BuildContext context) {
             return AlertDialog(
-              title: Text('Confirm Sign Out'),
-              content: Text('Are you sure you want to sign out?'),
+              title: const Text('Confirm Sign Out'),
+              content: const Text('Are you sure you want to sign out?'),
               actions: <Widget>[
                 TextButton(
                   onPressed: () {
                     Navigator.of(context).pop(false);
                   },
-                  child: Text('Cancel'),
+                  child: const Text('Cancel'),
                 ),
                 TextButton(
                   onPressed: () {
                     Navigator.of(context).pop(true);
                   },
-                  child: Text('Sign Out'),
+                  child: const Text('Sign Out'),
                 ),
               ],
             );

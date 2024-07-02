@@ -120,18 +120,18 @@ class _BottomNavigationState extends State<BottomNavigation> {
   @override
   Widget build(BuildContext context) {
     Widget body = _selectedIndex == 0
-    ? NewsApi()
+    ? const NewsApi()
       : _selectedIndex == 1
-        ? QuizPage()
+        ? const QuizPage()
         : _selectedIndex == 2
             ? HistoryPage()
             : _selectedIndex == 3
-                ? Recognition()
-                : MyAccount();
+                ? const Recognition()
+                : const MyAccount();
 
     return Scaffold(
       appBar: AppBar(
-        title: ColorFiltered(
+        title: const ColorFiltered(
             colorFilter: ColorFilter.mode(
               Colors.green,
               BlendMode.srcIn,
@@ -144,9 +144,6 @@ class _BottomNavigationState extends State<BottomNavigation> {
                   color: Colors.green,
                   fontFamily: 'SalmaproMedium-yw9ad'),
             )),
-        actions: [
-          IconButton(onPressed: () {}, icon: Icon(Icons.notifications)),
-        ],
       ),
       body: Stack(
         children: [
@@ -179,7 +176,7 @@ class _BottomNavigationState extends State<BottomNavigation> {
                   ),
                 );
               } else {
-                return SizedBox.shrink();
+                return const SizedBox.shrink();
               }
             },
           ),
@@ -207,11 +204,11 @@ class _BottomNavigationState extends State<BottomNavigation> {
                       Icons.receipt,
                       color: Colors.white,
                     ),
-                    backgroundColor: Colors.yellow,
+                    backgroundColor: Colors.orange,
                   ),
                 );
               } else {
-                return SizedBox.shrink();
+                return const SizedBox.shrink();
               }
             },
           ),

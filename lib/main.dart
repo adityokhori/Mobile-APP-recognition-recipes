@@ -31,7 +31,7 @@ class MyApp extends StatelessWidget {
               if (isLoggedIn) {
                 return OpenButtom();
               } else {
-                return SignInPage();
+                return const SignInPage();
               }
             }
           }
@@ -61,7 +61,7 @@ class SplashScreen extends StatelessWidget {
 class ErrorScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return const Scaffold(
       body: Center(
         child: Text('Error occurred!'),
       ),

@@ -25,26 +25,11 @@ class QuizPage extends StatelessWidget {
     }
 
     return Scaffold(
-      backgroundColor: Color.fromARGB(255, 155, 92, 167),
+      backgroundColor: const Color.fromARGB(255, 155, 92, 167),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            ElevatedButton(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => PlayQuiz(),
-                  ),
-                );
-              },
-              child: Text(
-                'Create Quiz',
-                style: TextStyle(fontSize: 20),
-              ),
-            ),
-            SizedBox(height: 20),
             ElevatedButton(
               onPressed: () {
                 if (user != null) {
@@ -55,7 +40,7 @@ class QuizPage extends StatelessWidget {
                       if (lastQuizTimestamp != null) {
                         DateTime lastQuizTime = lastQuizTimestamp.toDate();
                         DateTime nextAccessibleTime =
-                            lastQuizTime.add(Duration(hours: 1));
+                            lastQuizTime.add(const Duration(hours: 1));
                         if (now.isAfter(nextAccessibleTime)) {
                           updateLastQuizTime();
                           Navigator.push(
@@ -81,24 +66,24 @@ class QuizPage extends StatelessWidget {
                   });
                 }
               },
-              child: Text(
+              child: const Text(
                 'Start Quiz',
                 style: TextStyle(fontSize: 20),
               ),
             ),
-            SizedBox(height: 10), // Spacer
+            const SizedBox(height: 10), // Spacer
             if (user != null) ...[
               StreamBuilder<DocumentSnapshot>(
                 stream: firestore.collection('users').doc(user.uid).snapshots(),
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
-                    return CircularProgressIndicator();
+                    return const CircularProgressIndicator();
                   }
                   Timestamp? lastQuizTimestamp = snapshot.data?['lastQuizTime'];
                   if (lastQuizTimestamp != null) {
                     DateTime lastQuizTime = lastQuizTimestamp.toDate();
                     DateTime nextAccessibleTime =
-                        lastQuizTime.add(Duration(hours: 1));
+                        lastQuizTime.add(const Duration(hours: 1));
                     if (now.isBefore(nextAccessibleTime)) {
                       Duration remainingTime =
                           nextAccessibleTime.difference(now);
@@ -107,7 +92,7 @@ class QuizPage extends StatelessWidget {
                       // int seconds = remainingTime.inSeconds.remainder(60);
                       return Text(
                         'Next access in: ${hours.toString()} hours ${minutes.toString()} minutes',
-                        style: TextStyle(fontSize: 16, color: Colors.white),
+                        style: const TextStyle(fontSize: 16, color: Colors.white),
                       );
                     }
                   }
@@ -157,10 +142,10 @@ class _PlayQuizState extends State<PlayQuiz> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Add Quiz Question'),
+        title: const Text('Add Quiz Question'),
       ),
       body: SingleChildScrollView(
-        padding: EdgeInsets.all(20.0),
+        padding: const EdgeInsets.all(20.0),
         child: Form(
           key: _formKey,
           child: Column(
@@ -168,7 +153,7 @@ class _PlayQuizState extends State<PlayQuiz> {
             children: <Widget>[
               TextFormField(
                 controller: _questionController,
-                decoration: InputDecoration(labelText: 'Question'),
+                decoration: const InputDecoration(labelText: 'Question'),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return 'Please enter a question';
@@ -178,7 +163,7 @@ class _PlayQuizState extends State<PlayQuiz> {
               ),
               TextFormField(
                 controller: _option1Controller,
-                decoration: InputDecoration(labelText: 'Option 1'),
+                decoration: const InputDecoration(labelText: 'Option 1'),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return 'Please enter option 1';
@@ -188,7 +173,7 @@ class _PlayQuizState extends State<PlayQuiz> {
               ),
               TextFormField(
                 controller: _option2Controller,
-                decoration: InputDecoration(labelText: 'Option 2'),
+                decoration: const InputDecoration(labelText: 'Option 2'),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return 'Please enter option 2';
@@ -198,7 +183,7 @@ class _PlayQuizState extends State<PlayQuiz> {
               ),
               TextFormField(
                 controller: _option3Controller,
-                decoration: InputDecoration(labelText: 'Option 3'),
+                decoration: const InputDecoration(labelText: 'Option 3'),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return 'Please enter option 3';
@@ -208,7 +193,7 @@ class _PlayQuizState extends State<PlayQuiz> {
               ),
               TextFormField(
                 controller: _option4Controller,
-                decoration: InputDecoration(labelText: 'Option 4'),
+                decoration: const InputDecoration(labelText: 'Option 4'),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return 'Please enter option 4';
@@ -218,7 +203,7 @@ class _PlayQuizState extends State<PlayQuiz> {
               ),
               TextFormField(
                 controller: _correctAnswerController,
-                decoration: InputDecoration(labelText: 'Correct Answer'),
+                decoration: const InputDecoration(labelText: 'Correct Answer'),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return 'Please enter the correct answer';
@@ -229,7 +214,7 @@ class _PlayQuizState extends State<PlayQuiz> {
               TextFormField(
                 controller: _pointController,
                 keyboardType: TextInputType.number,
-                decoration: InputDecoration(labelText: 'Point'),
+                decoration: const InputDecoration(labelText: 'Point'),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return 'Please enter the point';
@@ -239,7 +224,7 @@ class _PlayQuizState extends State<PlayQuiz> {
               ),
               TextFormField(
                 controller: _difficultyController,
-                decoration: InputDecoration(labelText: 'Difficulty'),
+                decoration: const InputDecoration(labelText: 'Difficulty'),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return 'Please enter the difficulty level';
@@ -247,11 +232,11 @@ class _PlayQuizState extends State<PlayQuiz> {
                   return null;
                 },
               ),
-              SizedBox(height: 20),
+              const SizedBox(height: 20),
               TextFormField(
                 controller: _timerController,
                 keyboardType: TextInputType.number,
-                decoration: InputDecoration(labelText: 'Timer (seconds)'),
+                decoration: const InputDecoration(labelText: 'Timer (seconds)'),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return 'Please enter the time limit';
@@ -259,14 +244,14 @@ class _PlayQuizState extends State<PlayQuiz> {
                   return null;
                 },
               ),
-              SizedBox(height: 20),
+              const SizedBox(height: 20),
               ElevatedButton(
                 onPressed: () {
                   if (_formKey.currentState!.validate()) {
                     _submitQuestion();
                   }
                 },
-                child: Text('Submit'),
+                child: const Text('Submit'),
               ),
             ],
           ),
@@ -293,7 +278,7 @@ class _PlayQuizState extends State<PlayQuiz> {
       'timer': timer,
       'point': point, // Menambahkan nilai point ke dalam dokumen
     }).then((value) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
         content: Text('Question added successfully'),
       ));
       _resetForm();

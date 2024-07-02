@@ -16,7 +16,7 @@ class _FoodsHistoryPageState extends State<FoodsHistoryPage> {
     final user = FirebaseAuth.instance.currentUser;
 
     if (user == null) {
-      return Scaffold(
+      return const Scaffold(
         body: Center(
           child: Text('Please sign in to view saved recipes.'),
         ),
@@ -24,7 +24,7 @@ class _FoodsHistoryPageState extends State<FoodsHistoryPage> {
     } else {
       return Scaffold(
         appBar: AppBar(
-          title: Text('Food Nutri History :'),
+          title: const Text('Food Nutri History :'),
         ),
         body: StreamBuilder(
           stream: FirebaseFirestore.instance
@@ -35,9 +35,9 @@ class _FoodsHistoryPageState extends State<FoodsHistoryPage> {
           builder:
               (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
-              return Center(child: CircularProgressIndicator());
+              return const Center(child: CircularProgressIndicator());
             } else if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-              return Center(child: Text('No saved recipes yet.'));
+              return const Center(child: Text('No saved recipes yet.'));
             } else if (snapshot.hasError) {
               return Center(child: Text('Error: ${snapshot.error}'));
             } else {
@@ -110,7 +110,7 @@ class _FoodsHistoryPageState extends State<FoodsHistoryPage> {
                           });
                         }
                       },
-                      icon: Icon(Icons.more_vert),
+                      icon: const Icon(Icons.more_vert),
                     ),
                     onTap: () async {
                       if (!isFoodOpened) {
@@ -145,19 +145,19 @@ class _FoodsHistoryPageState extends State<FoodsHistoryPage> {
       context: context,
       builder: (context) {
         return AlertDialog(
-          title: Text('Delete Confirmation'),
-          content: Text('Are you sure you want to delete this item?'),
+          title: const Text('Delete Confirmation'),
+          content: const Text('Are you sure you want to delete this item?'),
           actions: <Widget>[
             TextButton(
               onPressed: () {
                 onDelete();
                 Navigator.of(context).pop();
               },
-              child: Text('Delete'),
+              child: const Text('Delete'),
             ),
             TextButton(
               onPressed: () => Navigator.of(context).pop(),
-              child: Text('Cancel'),
+              child: const Text('Cancel'),
             ),
           ],
         );

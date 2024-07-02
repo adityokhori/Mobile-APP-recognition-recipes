@@ -97,10 +97,10 @@ class _NewsApiState extends State<NewsApi> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('News'),
+        title: const Text('News'),
       ),
       body: _isLoading
-          ? Center(child: CircularProgressIndicator())
+          ? const Center(child: CircularProgressIndicator())
           : Column(
               children: [
                 Expanded(
@@ -126,7 +126,7 @@ class _NewsApiState extends State<NewsApi> {
                                       width: MediaQuery.of(context).size.width,
                                       height: 200,
                                       color: Colors.grey,
-                                      child: Center(child: Text('No Image')),
+                                      child: const Center(child: Text('No Image')),
                                     ),
                               // Title and Subtitle
                               Positioned(
@@ -135,7 +135,7 @@ class _NewsApiState extends State<NewsApi> {
                                 right: 0,
                                 child: Container(
                                   color: Colors.black.withOpacity(0.6),
-                                  padding: EdgeInsets.all(2.0),
+                                  padding: const EdgeInsets.all(2.0),
                                   child: Column(
                                     crossAxisAlignment:
                                         CrossAxisAlignment.start,
@@ -144,7 +144,7 @@ class _NewsApiState extends State<NewsApi> {
                                         article.title,
                                         maxLines: 1,
                                         overflow: TextOverflow.ellipsis,
-                                        style: TextStyle(
+                                        style: const TextStyle(
                                           color: Colors.white,
                                           fontSize: 16,
                                           fontWeight: FontWeight.bold,
@@ -154,7 +154,7 @@ class _NewsApiState extends State<NewsApi> {
                                         article.description,
                                         maxLines: 2,
                                         overflow: TextOverflow.ellipsis,
-                                        style: TextStyle(
+                                        style: const TextStyle(
                                           color: Colors.white70,
                                           fontSize: 12,
                                         ),
@@ -171,8 +171,8 @@ class _NewsApiState extends State<NewsApi> {
                   ),
                 ),
                 if (_isLoadingMore)
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
+                  const Padding(
+                    padding: EdgeInsets.all(8.0),
                     child: Center(child: CircularProgressIndicator()),
                   ),
               ],

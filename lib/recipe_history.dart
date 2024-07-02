@@ -39,16 +39,16 @@ class _RecipeHistoryPageState extends State<RecipeHistoryPage> {
     if (user == null) {
       return Scaffold(
         appBar: AppBar(
-          title: Text('Saved Recipes'),
+          title: const Text('Saved Recipes'),
         ),
-        body: Center(
+        body: const Center(
           child: Text('Please sign in to view saved recipes.'),
         ),
       );
     } else {
       return Scaffold(
         appBar: AppBar(
-          title: Text('Food Recipes History :'),
+          title: const Text('Food Recipes History :'),
         ),
         body: StreamBuilder(
           stream: FirebaseFirestore.instance
@@ -58,9 +58,9 @@ class _RecipeHistoryPageState extends State<RecipeHistoryPage> {
               .snapshots(),
           builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
-              return Center(child: CircularProgressIndicator());
+              return const Center(child: CircularProgressIndicator());
             } else if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-              return Center(child: Text('No saved recipes yet.'));
+              return const Center(child: Text('No saved recipes yet.'));
             } else if (snapshot.hasError) {
               return Center(child: Text('Error: ${snapshot.error}'));
             } else {
@@ -99,9 +99,9 @@ class _RecipeHistoryPageState extends State<RecipeHistoryPage> {
                         future: _downloadAndSaveImage(recipe['label']),
                         builder: (context, snapshot) {
                           if (snapshot.connectionState == ConnectionState.waiting) {
-                            return CircularProgressIndicator();
+                            return const CircularProgressIndicator();
                           } else if (snapshot.hasError) {
-                            return Icon(Icons.error);
+                            return const Icon(Icons.error);
                           } else {
                             return Image.file(
                               File(snapshot.data!),
@@ -132,7 +132,7 @@ class _RecipeHistoryPageState extends State<RecipeHistoryPage> {
                           });
                         }
                       },
-                      icon: Icon(Icons.more_vert),
+                      icon: const Icon(Icons.more_vert),
                     ),
                     onTap: () async {
                       await FirebaseFirestore.instance
@@ -170,21 +170,21 @@ class _RecipeHistoryPageState extends State<RecipeHistoryPage> {
       context: context,
       builder: (context) {
         return AlertDialog(
-          title: Text('Delete Confirmation'),
-          content: Text('Are you sure you want to delete this item?'),
+          title: const Text('Delete Confirmation'),
+          content: const Text('Are you sure you want to delete this item?'),
           actions: [
             TextButton(
               onPressed: () {
                 onDelete();
                 Navigator.pop(context);
               },
-              child: Text('Delete'),
+              child: const Text('Delete'),
             ),
             TextButton(
               onPressed: () {
                 Navigator.pop(context);
               },
-              child: Text('Cancel'),
+              child: const Text('Cancel'),
             ),
           ],
         );

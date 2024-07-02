@@ -9,13 +9,13 @@ class EdamamRecipes extends StatefulWidget {
 }
 
 class _EdamamRecipesState extends State<EdamamRecipes> {
-  TextEditingController _searchController = TextEditingController();
+  final TextEditingController _searchController = TextEditingController();
   List<dynamic> _recipes = [];
   String _query = '';
   String? _selectedDiet;
   String? _selectedHealth; 
 
-  List<String> _dietOptions = [
+  final List<String> _dietOptions = [
     'balanced',
     'high-fiber',
     'high-protein',
@@ -24,7 +24,7 @@ class _EdamamRecipesState extends State<EdamamRecipes> {
     'low-sodium',
   ];
 
-  List<String> _healthOptions = [
+  final List<String> _healthOptions = [
     'alcohol-cocktail',
     'alcohol-free',
     'celery-free',
@@ -65,8 +65,8 @@ class _EdamamRecipesState extends State<EdamamRecipes> {
 
   Future<void> _fetchRecipes(String query,
       {String? dietLabel, String? healthLabel}) async {
-    final String appId = '7e85a1ab';
-    final String appKey = 'e082fc4e59a2231ad81032cf8d5f64e7';
+    const String appId = '7e85a1ab';
+    const String appKey = 'e082fc4e59a2231ad81032cf8d5f64e7';
     String apiUrl =
         'https://api.edamam.com/search?q=$query&app_id=$appId&app_key=$appKey';
 
@@ -94,12 +94,12 @@ class _EdamamRecipesState extends State<EdamamRecipes> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text('Filter Recipes'),
+          title: const Text('Filter Recipes'),
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
               DropdownButtonFormField<String>(
-                decoration: InputDecoration(labelText: 'Diet'),
+                decoration: const InputDecoration(labelText: 'Diet'),
                 value: _selectedDiet,
                 onChanged: (String? newValue) {
                   setState(() {
@@ -114,7 +114,7 @@ class _EdamamRecipesState extends State<EdamamRecipes> {
                 }).toList(),
               ),
               DropdownButtonFormField<String>(
-                decoration: InputDecoration(labelText: 'Health'),
+                decoration: const InputDecoration(labelText: 'Health'),
                 value: _selectedHealth,
                 onChanged: (String? newValue) {
                   setState(() {
@@ -135,7 +135,7 @@ class _EdamamRecipesState extends State<EdamamRecipes> {
               onPressed: () {
                 Navigator.of(context).pop();
               },
-              child: Text('Cancel'),
+              child: const Text('Cancel'),
             ),
             TextButton(
               onPressed: () {
@@ -146,7 +146,7 @@ class _EdamamRecipesState extends State<EdamamRecipes> {
                   _selectedHealth = null;
                 });
               },
-              child: Text('Apply'),
+              child: const Text('Apply'),
             ),
           ],
         );
@@ -158,7 +158,7 @@ class _EdamamRecipesState extends State<EdamamRecipes> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Book Recipes'),
+        title: const Text('Book Recipes'),
       ),
       body: Column(
         children: [
@@ -171,7 +171,7 @@ class _EdamamRecipesState extends State<EdamamRecipes> {
                   decoration: InputDecoration(
                     hintText: 'Search Recipes',
                     suffixIcon: IconButton(
-                      icon: Icon(Icons.search),
+                      icon: const Icon(Icons.search),
                       onPressed: () {
                         setState(() {
                           _query = _searchController.text;
@@ -181,17 +181,17 @@ class _EdamamRecipesState extends State<EdamamRecipes> {
                     ),
                   ),
                 ),
-                SizedBox(height: 15),
+                const SizedBox(height: 15),
                 ElevatedButton(
                   onPressed: _showFilterDialog,
-                  child: Text('Filter', style: TextStyle(color: Colors.green),),
+                  child: const Text('Filter', style: TextStyle(color: Colors.green),),
                 ),
               ],
             ),
           ),
           Expanded(
             child: _recipes.isEmpty
-                ? Center(
+                ? const Center(
                     child: Text('No recipes found'),
                   )
                 : ListView.builder(
@@ -208,7 +208,7 @@ class _EdamamRecipesState extends State<EdamamRecipes> {
                           ),
                         ),
                         title: Text(recipe['label'],
-                            style: TextStyle(fontWeight: FontWeight.bold)),
+                            style: const TextStyle(fontWeight: FontWeight.bold)),
                         subtitle: Text('Source: ${recipe['source']}'),
                         onTap: () {
                           Navigator.push(

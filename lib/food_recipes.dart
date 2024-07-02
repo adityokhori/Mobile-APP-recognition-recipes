@@ -25,7 +25,7 @@ class _RecipePageState extends State<RecipePage> {
   String? _selectedDiet;
   String? _selectedHealth;
 
-  List<String> _dietOptions = [
+  final List<String> _dietOptions = [
     'balanced',
     'high-fiber',
     'high-protein',
@@ -34,7 +34,7 @@ class _RecipePageState extends State<RecipePage> {
     'low-sodium',
   ];
 
-  List<String> _healthOptions = [
+  final List<String> _healthOptions = [
     'alcohol-cocktail',
     'alcohol-free',
     'celery-free',
@@ -114,12 +114,12 @@ class _RecipePageState extends State<RecipePage> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text('Filter Recipes'),
+          title: const Text('Filter Recipes'),
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
               DropdownButtonFormField<String>(
-                decoration: InputDecoration(labelText: 'Diet'),
+                decoration: const InputDecoration(labelText: 'Diet'),
                 value: _selectedDiet,
                 onChanged: (String? newValue) {
                   setState(() {
@@ -134,7 +134,7 @@ class _RecipePageState extends State<RecipePage> {
                 }).toList(),
               ),
               DropdownButtonFormField<String>(
-                decoration: InputDecoration(labelText: 'Health'),
+                decoration: const InputDecoration(labelText: 'Health'),
                 value: _selectedHealth,
                 onChanged: (String? newValue) {
                   setState(() {
@@ -155,7 +155,7 @@ class _RecipePageState extends State<RecipePage> {
               onPressed: () {
                 Navigator.of(context).pop();
               },
-              child: Text('Cancel'),
+              child: const Text('Cancel'),
             ),
             TextButton(
               onPressed: () {
@@ -167,7 +167,7 @@ class _RecipePageState extends State<RecipePage> {
                   _selectedHealth = null;
                 });
               },
-              child: Text('Apply'),
+              child: const Text('Apply'),
             ),
           ],
         );
@@ -182,7 +182,7 @@ class _RecipePageState extends State<RecipePage> {
         title: Text('Recipes for ${widget.foodName}'),
       ),
       body: isLoading
-          ? Center(child: CircularProgressIndicator())
+          ? const Center(child: CircularProgressIndicator())
           : ListView.builder(
               itemCount: recipes.length,
               itemBuilder: (BuildContext context, int index) {
@@ -208,9 +208,9 @@ class _RecipePageState extends State<RecipePage> {
                                 builder: (context, snapshot) {
                                   if (snapshot.connectionState ==
                                       ConnectionState.waiting) {
-                                    return CircularProgressIndicator();
+                                    return const CircularProgressIndicator();
                                   } else if (snapshot.hasError) {
-                                    return Icon(Icons.error);
+                                    return const Icon(Icons.error);
                                   } else {
                                     return Image.file(
                                       File(snapshot.data!),
@@ -219,7 +219,7 @@ class _RecipePageState extends State<RecipePage> {
                                   }
                                 },
                               )
-                            : Placeholder(),
+                            : const Placeholder(),
                       ),
                     ],
                   ),
@@ -236,7 +236,7 @@ class _RecipePageState extends State<RecipePage> {
             ),
       floatingActionButton: FloatingActionButton(
         onPressed:_showFilterDialog,
-        child: Text('+ Filter'),
+        child: const Text('+ Filter'),
       ),
     );
   }
@@ -285,10 +285,10 @@ class _RecipeDetailPageState extends State<RecipeDetailPage> {
         title: Text(widget.recipe['label']),
       ),
       body: isLoading
-          ? Center(child: CircularProgressIndicator())
+          ? const Center(child: CircularProgressIndicator())
           : SingleChildScrollView(
               child: Padding(
-                padding: EdgeInsets.all(16.0),
+                padding: const EdgeInsets.all(16.0),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
@@ -302,12 +302,12 @@ class _RecipeDetailPageState extends State<RecipeDetailPage> {
                             height: 300,
                             fit: BoxFit.cover,
                           ),
-                          SizedBox(height: 8),
+                          const SizedBox(height: 8),
                           Text(
                             '- This recipe is from ${widget.recipe['source']}',
-                            style: TextStyle(fontWeight: FontWeight.bold),
+                            style: const TextStyle(fontWeight: FontWeight.bold),
                           ),
-                          SizedBox(height: 8),
+                          const SizedBox(height: 8),
                           GestureDetector(
                             onTap: () {
                               _launchURL(widget.recipe['url']);
@@ -315,7 +315,7 @@ class _RecipeDetailPageState extends State<RecipeDetailPage> {
                             child: Text.rich(
                               TextSpan(
                                 children: [
-                                  TextSpan(
+                                  const TextSpan(
                                     text: '- You can get more information at ',
                                     style: TextStyle(
                                       fontWeight: FontWeight.bold,
@@ -324,7 +324,7 @@ class _RecipeDetailPageState extends State<RecipeDetailPage> {
                                   ),
                                   TextSpan(
                                     text: '${widget.recipe['url']}',
-                                    style: TextStyle(
+                                    style: const TextStyle(
                                       fontWeight: FontWeight.bold,
                                       color: Colors.blue,
                                       decoration: TextDecoration.underline,
@@ -336,10 +336,10 @@ class _RecipeDetailPageState extends State<RecipeDetailPage> {
                           ),
                         ],
                       ),
-                    SizedBox(height: 16.0),
-                    Text('Ingredients:',
+                    const SizedBox(height: 16.0),
+                    const Text('Ingredients:',
                         style: TextStyle(fontWeight: FontWeight.bold)),
-                    SizedBox(height: 8.0),
+                    const SizedBox(height: 8.0),
                     for (var ingredient in widget.recipe['ingredients'])
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -355,34 +355,34 @@ class _RecipeDetailPageState extends State<RecipeDetailPage> {
                                     fit: BoxFit.cover,
                                   ),
                                 ),
-                              SizedBox(width: 8),
+                              const SizedBox(width: 8),
                               Expanded(
                                 flex: 3,
                                 child: Text('- ${ingredient['text']}'),
                               ),
                             ],
                           ),
-                          SizedBox(height: 8),
+                          const SizedBox(height: 8),
                         ],
                       ),
-                    SizedBox(height: 16.0),
-                    Text('Instructions:',
+                    const SizedBox(height: 16.0),
+                    const Text('Instructions:',
                         style: TextStyle(fontWeight: FontWeight.bold)),
-                    SizedBox(height: 8.0),
-                    Text(
+                    const SizedBox(height: 8.0),
+                    const Text(
                         'Please tap the button below to view the instructions for this recipe:'),
                     ElevatedButton(
                       onPressed: () {
                         _launchURL(Uri.parse(widget.recipe['url']));
                       },
-                      child: Text('View Instructions'),
+                      child: const Text('View Instructions'),
                     ),
                     if (widget.showSaveButton)
                       ElevatedButton(
                         onPressed: () {
                           saveRecipeToFirestore(widget.recipe, context);
                         },
-                        child: Text('Save Data'),
+                        child: const Text('Save Data'),
                       ),
                   ],
                 ),
@@ -418,14 +418,14 @@ class _RecipeDetailPageState extends State<RecipeDetailPage> {
           context: context,
           builder: (BuildContext context) {
             return AlertDialog(
-              title: Text('Success'),
-              content: Text('Recipe details have been saved.'),
+              title: const Text('Success'),
+              content: const Text('Recipe details have been saved.'),
               actions: <Widget>[
                 TextButton(
                   onPressed: () {
                     Navigator.of(context).pop();
                   },
-                  child: Text('OK'),
+                  child: const Text('OK'),
                 ),
               ],
             );
