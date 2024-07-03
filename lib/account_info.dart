@@ -92,7 +92,7 @@ class _MyAccountState extends State<MyAccount> {
         } else {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text('Tidak cukup poin untuk memilih opsi ini.'),
+              content: Text('Not enough points to choose this option.'),
             ),
           );
         }
