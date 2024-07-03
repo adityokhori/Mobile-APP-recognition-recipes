@@ -262,8 +262,7 @@ class _PlayQuizState extends State<PlayQuiz> {
 
   void _submitQuestion() {
     int timer = int.tryParse(_timerController.text) ?? 0;
-    int point = int.tryParse(_pointController.text) ??
-        0; // Mengonversi input point menjadi angka
+    int point = int.tryParse(_pointController.text) ?? 0; // input point ke angka
 
     FirebaseFirestore.instance.collection('questions').add({
       'question': _questionController.text,

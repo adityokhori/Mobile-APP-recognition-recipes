@@ -35,7 +35,6 @@ class _NewsApiState extends State<NewsApi> {
   Future<void> _fetchNews() async {
     final url =
         'https://newsapi.org/v2/everything?&q=healthy%20foods&page=$_currentPage&pageSize=$_pageSize&apiKey=24de81ed1a404519bb9504917f9f295f';
-
     try {
       final response = await http.get(Uri.parse(url));
       if (response.statusCode == 200) {
